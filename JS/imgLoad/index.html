@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>懒加载</title>
+</head>
+
+<body>
+  <div class="wrap">
+    <ul class="img-list J_imgList"></ul>
+  </div>
+  <!-- <img border="0" src="//g.alicdn.com/s.gif" data-src="1.jpg" width="520px" height="280px" alt=""> -->
+  <div style="display: none;" id="J_data">
+    [{"img": "imgs/img1.png", "name": "图片1"},
+      {"img": "imgs/img2.png", "name": "图片2"},
+      {"img": "imgs/img3.png", "name": "图片3"},
+      {"img": "imgs/img4.png", "name": "图片4"},
+      {"img": "imgs/img5.png", "name": "图片5"},
+      {"img": "imgs/img6.png", "name": "图片6"},
+      {"img": "imgs/img7.png", "name": "图片7"},
+      {"img": "imgs/img8.png", "name": "图片8"},
+      {"img": "imgs/img9.png", "name": "图片9"},
+      {"img": "imgs/img10.png", "name": "图片10"},
+      {"img": "imgs/img11.png", "name": "图片11"},
+      {"img": "imgs/img12.png", "name": "图片12"}]
+  </div>
+  <script type="text/html" id="J_imgTpl">
+    <li class="img-item">
+      <div class="img-wrap">
+        <img src="imgs/loading.gif" class="list-img" data-src="{{img}}" alt="{{name}}">
+      </div>
+      <div class="img-title">
+        <h1>{{name}}</h1>
+      </div>
+    </li>
+  </script>
+  <script src="js/utils.js"></script>
+  <script src="js/index.js"></script>
+</body>
+
+</html>
