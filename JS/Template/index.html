@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul id="list"></ul>
+  <script type="text/html" id="J_tpl">
+    <li>
+      <div>{{name}}</div>
+      <div>{{age}}</div>
+      <div>{{sex}}</div>
+    </li>
+  </script>
+
+  <script type="text/javascript">
+    var arr = [
+      { name: 'xichao', age: '24', sex: '男' },
+      { name: 'zs', age: '18', sex: '女' },
+      { name: 'ls', age: '22', sex: '男' },
+      { name: 'ww', age: '33', sex: '男' },
+      { name: 'zl', age: '25', sex: '女' },
+    ]
+
+    function init() {
+      var list = document.getElementById('list');
+      list.innerHTML = render(arr)
+    }
+
+    function render() {
+      var J_tpl = document.getElementById('J_tpl').innerHTML,
+        li_item = '';
+
+      arr.forEach(function (item, index) {
+        li_item += J_tpl.replace(/{{(.*?)}}/g, function (node, key,a, b) {
+          console.log(node, key,a, b)
+          return {
+            name: item.name,
+            age: item.age,
+            sex: item.sex
+          }[key]
+        })
+      })
+
+      return li_item;
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
