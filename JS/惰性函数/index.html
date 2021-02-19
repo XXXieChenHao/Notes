@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script type="text/javascript">
+
+    // 污染全局
+    // 每一次都需要判断 if
+    // var timeStamp = null;
+
+    // function getTimeStamp() {
+    //   if (timeStamp) {
+    //     return timeStamp
+    //   }
+
+    //   timeStamp = new Date().getTime();
+    //   return timeStamp;
+    // }
+
+    // 经过一些列操作 缓存数据，重写自身，返回结果。
+    function getTimeStamp() {
+      var timeStamp = new Date().getTime();
+
+      // 函数内部改变自身机制
+      getTimeStamp = function () {
+        return timeStamp;
+      }
+
+      // return timeStamp;
+      return getTimeStamp();
+    }
+
+    // 惰性函数表示函数执行的分支只会在函数第一次调用的时候执行，在第一次调用的过程中，该函数被覆盖为另一个按照合适方式执行的函数
+    // 这样任何对原函数的调用就不用再经过执行的分支了
+
+
+
+
+    console.log(getTimeStamp());
+    console.log(getTimeStamp());
+    console.log(getTimeStamp());
+    console.log(getTimeStamp());
+    console.log(getTimeStamp());
+  </script>
+</body>
+
+</html>
