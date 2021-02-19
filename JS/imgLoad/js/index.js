@@ -3,19 +3,19 @@
   var oImgList = doc.getElementsByClassName('J_imgList')[0],
     data = JSON.parse(doc.getElementById('J_data').innerHTML),  // 获取 data
     imgTpl = doc.getElementById('J_imgTpl').innerHTML,  // 获取模板
-    oImg = doc.getElementsByClassName('list-img');
+    oImgs = doc.getElementsByClassName('list-img');
 
   var init = function () {
     oImgList.innerHTML = renderList(data)
     bindEvent();
+    setTimeout(function() {
+      window.scrollTo(0, 0);
+    }, 150)
   }
 
   // 绑定事件
   function bindEvent() {
-      // window.onload = window.onscroll = throttle(imgLazyLoad(oImg), 500);
-    window.onload = window.onscroll = function () {
-      imgLazyLoad(oImg)();
-    }
+    window.onload = window.onscroll = throttle(imgLazyLoad(oImgs), 0, 0)
   }
 
   // 渲染列表
@@ -41,11 +41,12 @@ function imgLazyLoad(image) {
   var imgLen = image.length,
       n = 0;
   return function () {
-    // 闭包 n 不会被清除掉
     var cHeight = document.documentElement.clientHeight,  // 可视区域高度
-        sTop = document.documentElement.scrollTop || document.body.scroll, // 滚动高度
-        imgItem;
-
+    sTop = document.documentElement.scrollTop || document.body.scrollTop, // 滚动高度
+    imgItem;
+    
+    
+    // 闭包 n 不会被清除掉,再次进入从 n 开始执行
     for (var i = n; i < imgLen; i++) {
       imgItem = image[i];
       if(imgItem.offsetTop < cHeight + sTop) {

@@ -3,17 +3,15 @@
 // 执行一次 delay时间内不再执行 或最后一次触发的 delay 时间后再执行一次
 function debounce(callback, delay, triggle) {
   var t = null;
-
   var debounced = function() {
     var _self = this,
         args = arguments;
-
+    console.log(args)
     // 清空定时器 阻断执行
     if (t) {
       // 清空定时器 t 不为空, t 存储定时器的 id
       clearTimeout(t);
     }
-    
     // 首次执行
     if (triggle) {
       var exec = !t;
@@ -37,7 +35,9 @@ function debounce(callback, delay, triggle) {
   debounced.remove = function () {
     clearTimeout(t);
      t = null;
-  }  
+  }
+
+  return debounced
 }
 
 // 节流

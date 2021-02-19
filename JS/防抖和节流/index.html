@@ -19,31 +19,27 @@
   <div class="box"></div>
 
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-  <script src="./debounce.js"></script>
-  <script src="./throttle.js"></script>
+  <script src="./utils.js"></script>
   <script type="text/javascript">
     var oBox = document.getElementsByClassName('box')[0];
-    var t = null;
-    oBox.onmouseover = function () {
-      // 每一次进入都清除计时器，再重新增加一秒延时
-      clearTimeout(t);
-      t = setTimeout(function () {
-        console.log(1)
-      }, 1000);
-    }
+    // var t = null;
+    // oBox.onmouseover = function () {
+    //   // 每一次进入都清除计时器，再重新增加一秒延时
+    //   clearTimeout(t);
+    //   t = setTimeout(function () {
+    //     console.log(1)
+    //   }, 1000);
+    // }
 
     // 问题
     // 1. 污染全局
     // 2. 初次触发事件时会延迟执行
 
-    // ajax提交    下拉刷新
-
-
     function test() {
       console.log('我被执行')
     }
 
-    oBox.onmouseover = debounce(test, 1000, false);
+    oBox.onmouseover = debounce(test, 1000, true)
 
     // var oInput = document.getElementById('input');
     // oInput.onkeyup = throttle(check, 1000);
@@ -57,14 +53,11 @@
     //   }
     // }
 
-    // window.onresize = throttle(resize, 1000);
-    // function resize() {
-    //   console.log('窗口大小发生改变')
-    // }
-
-    window.onresize = function () {
+    window.onresize = throttle(resize, 1000);
+    function resize() {
       console.log('窗口大小发生改变')
     }
+
   </script>
 </body>
 
