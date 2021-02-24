@@ -38,12 +38,13 @@
 
       arr.forEach(function (item, index) {
         li_item += J_tpl.replace(/{{(.*?)}}/g, function (node, key,a, b) {
-          console.log(node, key,a, b)
           return {
             name: item.name,
             age: item.age,
             sex: item.sex
           }[key]
+
+          // return item[key]
         })
       })
 
