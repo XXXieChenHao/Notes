@@ -78,7 +78,7 @@ class PROMISE {
           // 对象属性
           onFulfilled: value => {
             // 函数
-            try {
+            try {k
               let result = onFulfilled(value)
               resolve(result)
             } catch (error) {
