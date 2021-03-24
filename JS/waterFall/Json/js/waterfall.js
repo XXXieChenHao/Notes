@@ -92,7 +92,7 @@
   */
   var Waterfall = function (option) {
     this.oWrapper = doc.querySelector(option.elem);
-    this.column = option.column || 5;l
+    this.column = option.column || 5;
     this.gap = option.gap || 10;
 
     this.itemWidth = (this.oWrapper.offsetWidth - (this.column - 1) * this.gap) / this.column;
