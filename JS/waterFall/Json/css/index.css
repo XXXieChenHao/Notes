@@ -13,4 +13,6 @@
 .wf-item img {
   display: block;
   width: 100%;
+  opacity: 0;
+  transition: opacity 1s;
 }
