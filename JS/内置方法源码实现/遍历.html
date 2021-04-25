@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>遍历迭代</title>
+  <script type="text/javascript" src="./public.js"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    // var arr = [{
+    //   name: '张三',
+    //   age: 22
+    // }, {
+    //   name: '李四',
+    //   age: 33
+    // }, {
+    //   name: '王五',
+    //   age: 44
+    // }];
+
+    // var obj = {
+    //   name: '汐潮',
+    //   age: 24
+    // }
+
+    // map 
+    // var new_arr = arr.map(function(item, index, _arr) {
+    //   console.log(index)
+    //   // var name = item.name;
+    //   // var age = item.age;
+    //   // return {
+    //   //   name,
+    //   //   age: age + 1
+    //   // }
+    // })
+
+    // var new_arr = arr.myMap(function(item, index, _arr) {
+    //   return item
+    // })
+
+    // console.log(arr)
+    // console.log('-----------------------------')
+    // console.log(new_arr)
+
+
+
+
+    // arr.forEach(function(currentValue, index, _arr) {
+    //   // console.log(currentValue, index, _arr)
+    //   // currentValue.age += 100;
+    //   // forEach 会修改原数组
+    //   // this.age += 10;
+    //   // return currentValue   // forEach 没有返回值
+    // }, obj)
+
+    // console.log(res)
+
+    // arr.forEach(function(currentValue, index, _arr) {
+    //   console.log(currentValue, index, _arr)
+    // })
+
+
+    // arr.myForEach(function(currentValue, index, _arr) {
+    //   console.log(currentValue, index, _arr)
+    // })
+
+    // filter
+    // var res = arr.filter(function(item, index, _arr) {
+    //   // console.log(this)
+    //   return item.age > 25
+    // })
+    // console.log(res)
+
+    // var _res = arr.myFilter(function(item, index, _arr) {
+    //   return item.age > 25
+    // }, obj)
+    // console.log(_res)
+
+    // every
+    // arr.every(callback(element[, index[, array]])[, thisArg])
+    // 所有通过测试的如果为 true 则返回结果为 true
+
+    // var res = arr.every(function(item, index, array) {
+    //   // console.log(this);
+    //   console.log(item)
+    //   // return item.age > 10;
+    // }, obj)
+
+    // console.log(res);
+
+    // var res2 = arr.myEvery(function(item, index, array) {
+    //   // console.log(this);
+    //   // return item.age > 10
+    // }, obj)
+
+    // console.log(res2)
+
+    //  some
+    // arr.some(callback(element[, index[, array]])[, thisArg])
+    // var res = arr.some(function(item, index, array) {
+    //   return item.age > 10;
+    // }, obj)
+    // console.log(res)
+
+
+    // arr.some(callback(element[, index[, array]])[, thisArg])
+    // var res = arr.mySome(function(item, index, array) {
+    //   return item.name === '李四';
+    // }, obj)
+    // console.log(res)
+
+    // reduce
+    // arr.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+
+    // var res = arr.reduce(function(accumulator, item, index, array) {
+    //   // accumulator
+    //   // 第一次循环   obj || item
+    //   // 后续再进入   上一次返回的值
+    //   console.log(accumulator)
+    //   return accumulator + item.age
+    // }, obj.age)
+    // var res2 = arr.myReduce(function(accumulator, item, index, array) {
+    //   // accumulator
+    //   // 第一次循环   obj || item
+    //   // 后续再进入   上一次返回的值
+    //   return accumulator + item.age
+    // })
+    // console.log(res2)
+     
+    var arr = [{
+      name: '张三',
+      age: 33
+    }, {
+      name: '李四',
+      age: 22
+    }, {
+      name: '王五',
+      age: 44
+    }];
+
+    var obj = {
+      name: '汐潮',
+      age: 24
+    }
+    // reduceRight
+    // var res2 = arr.myReduceRight(function(accumulator, item, index, array) {
+    //   // accumulator
+    //   // 第一次循环   obj || item
+    //   // 后续再进入   上一次返回的值
+    //   console.log(item)
+    //   return accumulator + item.age
+    // }, obj.age)
+    // console.log(res2)
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>web worker</title>
+</head>
+
+<body>
+</body>
+<script type="text/javascript">
+  if (window.Worker) {
+    // 生成一个专用 worker  传入运行脚本的 uri 
+    var myWorker = new Worker('./index.js')
+    // 向 worker 中发送数据
+    myWorker.postMessage('发送数据');
+    console.log('发送数据中')
+    setTimeout(() => {
+      // myWorker.terminate();
+    }, 1000);
+  }
+</script>
+
+</html>

@@ -24,7 +24,6 @@
     },
     // 绑定事件
     bindEvent: function () {
-
     },
     // 滚动底部
     scrollToBottom: function () {
@@ -33,7 +32,7 @@
     // 获取数据
     getImgDatas: function () {
       xhr.ajax({
-        url: 'http://localhost:8888/',
+        url: './',
         type: 'GET',
         dataType: 'JSON',
         data: {
@@ -49,6 +48,7 @@
 
     }
   }
+
 
   window.Waterfall = Waterfall;
 
