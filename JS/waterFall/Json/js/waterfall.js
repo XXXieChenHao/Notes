@@ -108,8 +108,11 @@
     },
     // 绑定事件
     bindEvent: function () {
+<<<<<<< HEAD
+=======
       // this.getImgDatas();
       window.addEventListener('scroll', throttle(this.scrollToBottom.bind(this), 300), false);
+>>>>>>> 2b6cba3663e899a7be40a3b5f3bf8062138383d5
     },
     // 滚动底部
     scrollToBottom: function () {
@@ -119,9 +122,23 @@
     },
     // 获取数据
     getImgDatas: function () {
+<<<<<<< HEAD
+      xhr.ajax({
+        url: './',
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+          pageNum: this.pageNum,
+        },
+        success: function (data) {
+          console.log(data);
+        }
+      })
+=======
       setTimeout(() => {
         this.renderList(new Date().getTime() % 2 == 1 ? result1 : result2)
       }, 1000);
+>>>>>>> 2b6cba3663e899a7be40a3b5f3bf8062138383d5
     },
     // 渲染页面
     renderList: function (data) {
@@ -165,6 +182,7 @@
       return [].indexOf.call(arr, Math.min.apply(null, arr));
     }
   }
+
 
   window.Waterfall = Waterfall;
 

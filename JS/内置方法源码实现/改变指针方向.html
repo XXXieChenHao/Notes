@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>改变指针方向</title>
+</head>
+
+<body>
+  <button id="btn">我是按钮 点我点我点我</button>
+  <script type="text/javascript" src="./public.js"></script>
+  <script type="text/javascript">
+  
+  // function.call(thisArg, arg1, arg2, ...)
+
+  /**
+   * this 关键字
+   * this -> 所属对象  对象.方法()
+   * this -> window(全局对象)  单独使用  fun()
+   * this -> undefined   严格模式 'use strict'
+   * this -> event  事件中的 this 指向元素
+   * this -> thisArg   类似 call()、apply()、bind()
+  */
+
+  // 1. this -> 所属对象  对象.方法()
+  // var obj = {
+  //   name: '汐潮',
+  //   age: 24,
+  //   say: function() {
+  //     console.log(this);
+  //     console.log(this.name, this.age)
+  //     this.age += 100;
+  //   }
+  // }
+  // // 对象是 引用值    栈中存储的地址   obj变量与say方法中的 this 都是 地址都指向堆中的同一位置
+  // obj.say();
+  // console.log(obj.age)
+
+
+  // this -> window(全局对象)  单独使用  fun()
+  
+  // var a = '我是fun外的a'
+  // function fun() {
+  //   console.log(this);  // window
+  // }
+
+  // fun();
+
+  // this -> undefined   严格模式 'use strict'
+  // function fun() {
+  //   'use strict';
+  //   // a = 3;  // 污染全局变量
+  //   console.log(this);
+  // }
+  // fun();
+
+  // this -> event  事件中的 this 指向元素
+
+  // var oBtn = document.querySelector('#btn');
+  // oBtn.addEventListener('click', function() {
+  //   console.log(this);
+  // }, false)
+
+  // this -> thisArg   类似 call()、apply()、bind()
+
+  // var oBtn = document.querySelector('#btn');
+  // var _self = this;
+  // oBtn.addEventListener('click', bindClick.bind(_self), false)
+  // var a = 1;
+
+  // function bindClick() {
+  //   console.log(this);
+  // }
+
+  // call apply bind
+  
+  function Init(name, age) {
+    this.name = name;
+    this.age = age;
+    this.say = function() { // 公有方法
+      console.log(this);
+      console.log(arguments)
+      return 1
+      // console.log('我的名字叫做: ' + this.name, '我的年龄是: ' + this.age);
+    }
+  }
+
+  var obj = {
+    name: '张三',
+    age: 84,
+    simple: '哈哈哈哈哈哈'
+  }
+
+  var xc = new Init('汐潮', 24);
+  // xc {
+  //   name: '汐潮',
+  //   age: 24,
+  //   say: function() {...}
+  // }
+
+  // xc.say.apply(obj, [1, 2, 3, 4, 5]);
+  // console.log('-----------------')
+  // xc.say.myApply(obj, [1, 2, 3, 4, 5]);
+  var t = xc.say.myBind(obj, 1, 2, 3);
+  t();
+  
+  // xc.say('编程');
+  // xc.say.call(obj, 1, 2, 3, 4, 5)
+  // var a = xc.say.call(obj, 1, 2, 3, 4, 5)
+  // console.log(a)
+  // console.log('--------------')
+  // var b = xc.say.myCall(obj, 1, 2, 3, 4, 5)
+  // console.log(b)
+
+  // Function.prototype.call(thisArg, c1, c2, c3...);
+  // xc.say.call(obj, '吃饭', '睡觉', '打豆豆');
+  // xc.say.apply(obj, ['吃饭', '睡觉', '打豆豆']);
+
+
+  
+
+  </script>
+</body>
+
+</html>

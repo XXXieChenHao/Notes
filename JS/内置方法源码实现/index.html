@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deepClone</title>
+  <script type="text/javascript" src="./public.js"></script>
+</head>
+
+<body>
+  <script type="text/javascript">
+    // 深拷贝
+    var obj = {
+      name: '大大大大大个呀',
+      age: 24,
+      info: {
+        hobby: ['eat', 'sing'],
+        eat: {
+          breakfast: 8,
+          lanch: 22,
+          dinner: 0
+        }
+      },
+      arr: [1, 2, 3, 4]
+    }
+
+    var _obj = deepClone(obj);
+
+    console.log(obj)
+    console.log(_obj)
+  </script>
+</body>
+
+</html>
