@@ -1,88 +1,67 @@
-// function doSth (t, cb) {
-//   return function() {
-//     if(--t === 0) {
-//       cb();
-//     }
-//   }
-// }
-
-// let fn = doSth(4, logSth.bind(null, logSth2.bind(null, logSth3)));
-
-// function logSth (cb) {
-//   console.log('logSth');
-//   cb();
-// }
-
-// function logSth2(cb) {
-//   console.log('logSth2');
-//   cb();
-// }
-
-// function logSth3() {
-//   console.log('logSth3')
-// }
-
-
-// function doSth(t) {
-//   return function() {
-//     if(--t === 0) {
-//       logSth(function () {
-//         logSth2(function() {
-//           logSth3();
+// function getResult(num) {             // 3
+//   add(num, function (data1) {         // 3 + 12
+//     console.log(data1)                // 15
+//     sub(data1, function (data2) {     // 15 - 6
+//       console.log(data2)              // 9
+//       div(data2, function (data3) {   // 9 / 3
+//         console.log(data3)            // 3
+//         mul(data3, function (data4) { // 3 * 10
+//           console.log(data4)          // 30
 //         })
 //       })
-//     }
-//   }
+//     })
+//   })
 // }
 
+// function add(num, cb) {
+//   cb(num + 12)
+// }
+// function sub(num, cb) {
+//   cb(num - 6)
+// }
 
-// let fn = doSth(4)
+// function div(num, cb) {
+//   cb(num / 3)
+// }
 
-// fn();
-// fn();
-// fn();
-// fn();
+// function mul(num, cb) {
+//   cb(num * 10)
+// }
 
+// getResult(3)
 
+// -----------------------------------
+// executor 同步
+// let promise = new Promise((resolve, reject) => {
+//   console.log('1');
+// })
+// console.log('2'); 
 
-
-// $.ajax({
-//   success (data1) {
-//     $.ajax({
-//       data: {
-//         d: data1
-//       },
-//       success(data2) {
-//         $.ajax({
-//           data: {
-//             d: data2ky
-//           },
-//           success(data3) {
-//             $.ajax({
-//               data: {
-//                 d: data3
-//               },
-//               success (data) {
-//                 // do something ...
-//               }
-//             })
-//           }
-//         })
-//       }
-//     })
-//   }
+// -----------------------------------
+// then 方法异步
+// let promise = new Promise((resolve, reject) => {
+//   resolve()
 // })
 
-let promise = new Promise((resolve, reject) => {
-  resolve('承诺实现')
-  // reject('承诺失信')
-})
+// promise.then(res => {
+//   console.log('Then')
+// })
 
-// then 是异步调用
-promise.then((res) => {
-  console.log(res);
-}, (err) => {
-  console.log(err)
-})
+// console.log('Global')
 
-console.log('Global')
+// -----------------------------------
+// let promise = new Promise((resolve, reject) => {
+//   reject('错误')
+// })
+// promise.then((res) => {
+//   console.log(1)
+// }).then(() => {
+
+// }).then(() => {
+
+// }, (err) => {
+//   console.log('then', err)
+// }).catch(err => {
+//   console.log('catch', err)
+// })
+// -----------------------------------
