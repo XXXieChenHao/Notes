@@ -16,4 +16,4 @@ async function logData() {
   console.log(data)
 }
 logData()
-console.log('Global')
+// console.log('Global')
