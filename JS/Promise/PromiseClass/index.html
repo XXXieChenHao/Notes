@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="MyPromise.js"></script>
+</head>
+
+<body>
+  <script>
+    let p = new MyPromise((resolve, reject) => {
+        // resolve('解决')
+        reject('错误')
+      //   setTimeout(() => {
+      //     // resolve('解决')
+      //     reject('错误')
+      // }, 1000)
+    })
+    p.then((res) => {
+      return 'p1'
+    }, (reason) => {
+      return err
+    })
+    .then((res) => {
+      console.log('then: ' + res)
+    }, (err) => {
+      console.log('then: ' + err)
+    })
+
+  //   let p2 = new Promise((resolve, reject) => {
+  //     reject('错误')
+  //   })
+  //  p2.then((res) => {
+  //   console.log(res)
+  //  }, () => {
+  //    console.log(aaa)
+  //  })
+  </script>
+</body>
+
+</html>

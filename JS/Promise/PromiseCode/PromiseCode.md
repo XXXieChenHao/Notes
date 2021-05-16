@@ -197,7 +197,7 @@ class MyPromise {
         });
         this.onRejectCallbacks.push(() => {
           try {
-            let x = onRejected(this.reason);
+            let x = ponRejected(this.reason);
             resolvePromise(promise2, x, resolve, reject);
           } catch (e) {
             reject(e);
@@ -216,5 +216,4 @@ class MyPromise {
 
 }
 
-module.exports = MyPromise;
-```
+module.exports = MyPromise;\]
