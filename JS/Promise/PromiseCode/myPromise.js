@@ -86,7 +86,7 @@ class MyPromise {
 
     // promise 的异常捕获实在 executor 时，所以封装时就捕获此阶段异常并且使用 reject 抛出，就可以在 then 的第二个方法中获取到
     try {
-      // excutor 在 new 的时候立即执行，所以在 constructor 里调用并且传入两个函数
+      // executor 在 new 的时候立即执行，所以在 constructor 里调用并且传入两个函数
       executor(resolve, reject);
     } catch (e) {
       reject(e)
