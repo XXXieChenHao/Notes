@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // function say(time) {
+    //   return 'Xichao is coding ' + time;
+    // };
+
+    // const user = {
+    //   firstName: 'Xi',
+    //   lastName: 'Chao'
+    // };
+
+    // const element = (
+    //   <h1>
+    //     {user.firstName + user.lastName} say {say('now')}
+    //   </h1>
+    // );
+
+    // 4. 表达式
+    // function loopJsx(times) {
+    //   let str = [];
+    //   for(let i = 0; i < times; i++) {
+    //     str.push(<li>Li标签：{i}</li>)
+    //   }
+    //   return str
+    // }
+
+    // function distance(flag) {
+    //   if(flag) {
+    //     return <h1>flag is true</h1>
+    //   }
+    //   return <h1>flag is false</h1>
+    // }
+
+    // const element = (
+    //   <div>
+    //     {distance(true)}
+    //     <ul>{loopJsx(10)}</ul>  
+    //   </div>
+    // );
+
+    // 5. JSX 特殊属性
+    // const img = {
+    //   url: 'https://www.google.com/search?q=%E5%9B%BE%E7%89%87&tbm=isch&source=iu&ictx=1&fir=vQjlM9KtkGsb_M%252CJeaDEV9l4RQZhM%252C_&vet=1&usg=AI4_-kTHQSaEWY8Hyc_KflPp4H67JSU8nA&sa=X&ved=2ahUKEwj8p9iKzrLxAhU0yosBHVxGAQkQ9QF6BAgREAE&biw=1440&bih=796#imgrc=vQjlM9KtkGsb_M'
+    // }
+    // const element = (
+    //   <div>
+    //     <h1 index="0">h1 标签</h1>
+    //     <img src={img.url} />
+    //   </div>
+    // );
+
+    // 6. 防注入攻击
+    // const title = 'alert(1)'
+    // const element = <h1>{title}</h1>;
+
+    // 7. JSX 代表对象
+
+    // const element = (
+    //   <h1 className="h1">
+    //     Hello, Xichao
+    //   </h1>
+    // )
+
+    // const element = React.createElement(
+    //   'h1',
+    //   {className: 'h1'},
+    //   'Hello, Xichao'
+    // )
+
+    function tick() {
+      const element = (
+        <div>
+          <h1>Hello, Xichao</h1>
+          <div>It is { new Date().toLocaleTimeString() }</div>
+        </div>
+      )
+      ReactDOM.render(
+        element,
+        document.getElementById('root')
+      );
+    }
+
+    setInterval(tick, 1000);
+  </script>
+</body>
+
+</html>

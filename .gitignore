@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+output
+.DS_Store
+.idea
+.history
+.vscode
+false
+dist
