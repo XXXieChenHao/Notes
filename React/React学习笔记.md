@@ -385,3 +385,9 @@ function withdraw(account, amount) {
   account.total -= amount;
 }
 ```
+
+
+
+## 状态（state）和生命后期（Lifecycle）
+
+对于一个组件来说，组件实现的细节应该属于组件内部。如时钟案例中
