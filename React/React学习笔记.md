@@ -390,4 +390,244 @@ function withdraw(account, amount) {
 
 ## 状态（state）和生命后期（Lifecycle）
 
-对于一个组件来说，组件实现的细节应该属于组件内部。如时钟案例中
+### 前言
+
+对于一个组件来说，组件实现的细节应该属于组件内部。如时钟案例中原有代码为
+
+```jsx
+function tick() {
+  const element = (
+    <div>
+      <h1>Hello, Xichao</h1>
+      <div>It is { new Date().toLocaleTimeString() }</div>
+    </div>
+  )
+
+	ReactDOM.render(
+  	element,
+  	document.getElementById('root')
+  });
+}
+
+setInterval(tick, 1000);
+```
+
+在封装组件时我们更期待的是我们写一次，钟表组件就自动更新时间，如:
+
+```jsx
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+
+### 添加状态 （state）
+
+1. 创建一个 ES6 的 class 类继承 `React.Component`
+2. 添加空方法 render() 并且返回页面元素
+3. 添加 class 构造函数初始化分配 state
+4. 将 props 传入基构造函数
+5. 在 render 中将 props 改为 state
+
+```jsx
+class Clock extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+  render() {
+    return (
+      <div>
+        <h1>hello, Xichao</h1>
+        <div>It is { this.state.date.toLocaleTimeString() }</div>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+)
+```
+
+如此，我们只差让时钟组件设置成为每秒更新
+
+### 添加生命周期 （Lifecycle）
+
+我们期待在时钟第一次呈现组件时创建一个定时器，这在 React 中叫做 mounting（挂载），同时在删除时钟 DOM 元素时销毁定时器释放内存，这在 React 中叫做 unmounting （卸载）
+
+生命周期方法（Lifecycle methods）
+
+**挂载阶段**
+
+1. componentWillMount  发生在 render 函数之前，还没有挂载 Dom
+2. render
+3. componentDidMount  发生在 render 函数之后，已经挂载 Dom
+4. componentWillUnmount 会在组件卸载及销毁之前直接调用。在此方法中执行必要的清理操作
+
+```jsx
+class Clock extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.tick();
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>hello, Xichao</h1>
+        <div>It is { this.state.date.toLocaleTimeString() }</div>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+)
+```
+
+在 DOM 加载后运行设置定时器，在组件卸载时清除定时器。
+
+实现 tick 方法，使用`this.setState()`方法调度对组件本地状态的更新
+
+
+
+**调用方法的顺序**
+
+1. 当 `<Clock />`组件传递到 ReactDOM.render 中，react 调用组件中的 constructor 方法，并且初始化了包含当前时间的 state 对象。
+2. react 调用 render 方法，这时 react 已经知道了需要展示在屏幕上的内容，然后 react 更新 DOM 匹配渲染的内容
+3. 当 Clock 输出插入到 DOM 中，react 调用 `componentDidMount` 生命周期的方法。这个生命周期通知浏览器每间隔 1s 调用一次 tick 方法。
+4. 每一秒浏览器都会调用 tick 方法，Clock 组件调用包含当前时间对象的 setState 方法，由于调用了 setState 方法，react 知道了 state 的变化，并且再一次调用 render 方法来改变屏幕上的显示，这时在 render() 中的 this.state.date 与之前不同，所以 render 将会输出包含当前时间对象的内容，并且 DOM 也会相应更新。
+5. 如果当 Clock 组件被从 DOM 中移除时则会调用生命周期 `componentWillUnmount`方法，这样定时器就能够被清空。
+
+
+
+### State 正确使用方式
+
+**有关 setState() 的三件事**
+
+1. 不要直接修改 state
+
+```jsx
+this.state.comment = 'Hello';
+```
+
+直接修改 state 并不会再次调用 render 方法，所以组件不会重新呈现，状态改变也不会相应的更新页面
+
+正确做法：
+
+```jsx
+this.setState({comment: 'Hello'});
+```
+
+
+
+2. State 更新可能是异步的
+
+在 react 中 state 和 props 的更新可能是异步的，所以不能依赖它们的值来进行计算下一个 state 的值。
+
+```jsx
+this.setState({
+  counter: this.state.counter + this.props.increment
+})
+```
+
+解决这种方式可以使用 setState 的第二种形式，接收函数作为参数而不是对象
+
+```jsx
+this.setState((state, props) => ({
+  counter: state.counter + props.increment
+}))
+```
+
+使用常规函数
+
+```jsx
+this.setState(function(state, props) {
+  return {
+    counter: state.counter + props.increment
+  }
+})
+```
+
+这种方式会接受上一个 state 作为第一个参数，将此次更新被应用时的 props 作为第二个参数
+
+
+
+3. State 更新将会被合并
+
+在 state 中，可能包含几个独立的变量
+
+```jsx
+constructor(props) {
+  super(props);
+  this.state = {
+    posts: [],
+    comments: []
+  };
+}
+```
+
+然后可以分别通过 `this.setState()` 方法单独的更新它们
+
+```jsx
+componentDidMount() {
+  fetchPosts().then(response => {
+    this.setState({
+      posts: response.posts
+    });
+  });
+
+  fetchComments().then(response => {
+    this.setState({
+      comments: response.comments
+    });
+  });
+}
+```
+
+官方文档说，这里的合并是浅合并，所谓浅合并就是只更改了当前修改的state，而不会对其他 state 造成任何影响，当修改 comments 时，posts 不会受到任何影响，同样被完整保存了下来。
+
+
+
+### 数据向下流动
+
+无论是父组件还是子组件都无法确认是否具有状态，state 是组件内的密封状态。除了拥有和设置他的组件以外，其他任何组
+
+件都不能访问它。
+
+组件可以选择传递它的 state 作为子组件的 props。
+
+```jsx
+<FormattedDate date={this.state.date} />
+```
+
+FormattedDate 组件将会在 props 中接收 date 数据。但是对 FormattedDate 来说，无法确定数据来自于父组件的 state 还是 props 又或者是手动输入。
+
+```jsx
+function FormattedDate(props) {
+  return <h2>It is {props.date.toLocaleTimeString()}.</h2>;
+}
+```
+
+这通常称之为自顶向下或是单向性数据流。任何的 state 总是所属于特定的组件，而且从该 state 派生出的任何数据或 UI 只能影响低于它的组件。
+
+每个组件中的 state 都是相对独立的，同一个组件多次引用，其 state 也是互不影响的。
