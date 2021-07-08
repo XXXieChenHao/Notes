@@ -1,11 +1,8 @@
 # React 学习(一) ——核心概念
-
-
-
+<br />
 ## 环境
 
 1. 新建文件，引入 CDN 地址
-
 - React
 - ReactDOM
 - Babel
@@ -46,7 +43,6 @@
 ### JSX 中嵌入表达式
 
 **1. 花括号**
-
 在 JSX 中使用花括号嵌入 JS 表达式
 
 ```jsx
@@ -59,7 +55,6 @@ ReactDOM.render(
 ```
 
 **2. 括号**
-
 为了可读性，可以将 JSX 拆分成多行，虽然括号不是必须的，但是使用括号可以避免 JavaScript 引擎编译时的自动插入分号导致的错误。
 
 ```jsx
@@ -76,7 +71,6 @@ ReactDOM.render(
 ```
 
 **3. 嵌入表达式**
-
 你可以将有效的 JavaScript 表达式放到 JSX 的花括号中。例如表达式，对象属性或者函数等所有有效的JavaScript 表达式。
 
 ```jsx
@@ -102,7 +96,6 @@ ReactDOM.render(
 ```
 
 **4.  JSX 也是表达式**
-
 在编译后 JSX 成为常规的 JavaScript 函数，这意味着你可以在 if 、for 中使用，并且 JSX 可以作为函数的参数和返回值。
 
 ```jsx
@@ -135,7 +128,6 @@ ReactDOM.render(
 ```
 
 **5.  使用 JSX 指定属性**
-
 在 JSX 中声明指定属性可以使用引号，但注意不要在花括号中加入引号，您应该使用引号(用于字符串值)或花括号(用于表达式），避免同时使用两者在同一属性中。
 
 ```jsx
@@ -152,13 +144,11 @@ const element = (
 ```
 
 **6. JSX 防注入攻击**
-
 默认情况下，JSX 在编译时会将嵌入的表达式之前进行转义，所有内容在呈现之前都会转成字符串，以达到防止 xss 注入攻击。
 
 
 
 **7. JSX 代表对象**
-
 babel 会将 JSX 转换成 React.createElement() 函数调用
 
 下面两者是相等的
@@ -189,10 +179,9 @@ ReactDOM.render(
 );
 ```
 
-
+<br />
 
 ## 渲染元素
-
 > 元素是 React 的最小构建模块
 
 不像浏览器中的 dom 元素，React 创建元素的成本更低。
@@ -202,13 +191,11 @@ ReactDOM.render(
 ### 渲染元素到 DOM 中
 
 在 HTML 文件中的某处存在一个标签
-
 ```html
 <div id="root"></div>
 ```
 
 只用 React 构建的项目通常只有一个根结点。
-
 渲染 react 元素需要将根结点与元素传入 ReactDOM.render()
 
 ```jsx
@@ -223,7 +210,6 @@ ReactDOM.render(element, document.getElmentById('root'));
 ### 更新已渲染的元素
 
 React 元素是不可改变的，一旦创建了 React 元素，你就不能改变它的子元素和属性。React 表现为某个时间点的 UI。
-
 据目前所知，改变 UI 只能通过创建一个新的元素通过 ReactDOM.render() 修改 UI。
 
 ```jsx
@@ -251,7 +237,6 @@ setInterval(tick, 1000);
 ## 组件和 Props
 
 组件允许你将 UI 分成**独立的、可重复使用的**部分，并且单独考虑每一部分。
-
 从概念上来说，组件是像 JavaScript 中的 function，接收任意改变的输入（叫做 props ），并且返回应该展示在屏幕上的 React 元素的描述。
 
 
@@ -261,7 +246,6 @@ setInterval(tick, 1000);
 > 这里只需要注意组件定义即可，对于渲染会在一下 part 描述
 
 **注意：组件名需要大写**，小写会被当成 DOM 标签
-
 最简单的定义一个组件的方式就是定义一个 JavaScript 方法：
 
 ```jsx
@@ -277,7 +261,6 @@ ReactDOM.render(
 ```
 
 这个函数是一个合法的 React 组件，因为它接受了一个唯一带有数据的 props（代表属性）对象并且返回一个 React 元素，这种组件叫做 函数组件，因为它本质上与 JavaScript 无异。
-
 你也可以使用 ES6 中的 Class 去定义组件：
 
 ```jsx
@@ -323,11 +306,8 @@ ReactDOM.render(
 上述代码中：
 
 ​	首先：调用 ReactDOM.render() 并传入 `<Welcome name="Xichao" />`
-
 ​	随后：React 调用 Welcome 组件，并将 { name: 'Xichao' } 作为 props 传入组件中
-
 ​	然后：Welcome 组件将 `<h1>Hello, Xichao</h1>` 元素作为结果返回
-
 ​	最后：ReactDOM 将DOM 更新为 `<h1>Hello, Xichao</h1>`
 
 
@@ -365,11 +345,7 @@ ReactDOM.render(
 ### 只读属性 Props
 
 声明组件时无论是 function 或是 class，都绝对不能改变它自身的 props。
-
 React 是非常灵活的，但是它有一条严格的规则：**所有的 React 函数都必须像纯函数一样保护 Props 不被更改**
-
-
-
 纯函数（pure）：纯函数不会企图修改输入的值，对于相同的输入每次返回的结果都一致。
 
 ```javascript
@@ -387,11 +363,13 @@ function withdraw(account, amount) {
 ```
 
 
+<br />
 
 ## 状态（state）和生命后期（Lifecycle）
 
-### 前言
+<br />
 
+### 前言
 对于一个组件来说，组件实现的细节应该属于组件内部。如时钟案例中原有代码为
 
 ```jsx
@@ -422,7 +400,6 @@ ReactDOM.render(
 ```
 
 ### 添加状态 （state）
-
 1. 创建一个 ES6 的 class 类继承 `React.Component`
 2. 添加空方法 render() 并且返回页面元素
 3. 添加 class 构造函数初始化分配 state
@@ -454,13 +431,10 @@ ReactDOM.render(
 如此，我们只差让时钟组件设置成为每秒更新
 
 ### 添加生命周期 （Lifecycle）
-
 我们期待在时钟第一次呈现组件时创建一个定时器，这在 React 中叫做 mounting（挂载），同时在删除时钟 DOM 元素时销毁定时器释放内存，这在 React 中叫做 unmounting （卸载）
-
 生命周期方法（Lifecycle methods）
 
 **挂载阶段**
-
 1. componentWillMount  发生在 render 函数之前，还没有挂载 Dom
 2. render
 3. componentDidMount  发生在 render 函数之后，已经挂载 Dom
@@ -505,7 +479,6 @@ ReactDOM.render(
 ```
 
 在 DOM 加载后运行设置定时器，在组件卸载时清除定时器。
-
 实现 tick 方法，使用`this.setState()`方法调度对组件本地状态的更新
 
 
@@ -523,7 +496,6 @@ ReactDOM.render(
 ### State 正确使用方式
 
 **有关 setState() 的三件事**
-
 1. 不要直接修改 state
 
 ```jsx
@@ -531,7 +503,6 @@ this.state.comment = 'Hello';
 ```
 
 直接修改 state 并不会再次调用 render 方法，所以组件不会重新呈现，状态改变也不会相应的更新页面
-
 正确做法：
 
 ```jsx
@@ -541,7 +512,6 @@ this.setState({comment: 'Hello'});
 
 
 2. State 更新可能是异步的
-
 在 react 中 state 和 props 的更新可能是异步的，所以不能依赖它们的值来进行计算下一个 state 的值。
 
 ```jsx
@@ -573,7 +543,6 @@ this.setState(function(state, props) {
 
 
 3. State 更新将会被合并
-
 在 state 中，可能包含几个独立的变量
 
 ```jsx
@@ -610,10 +579,7 @@ componentDidMount() {
 
 ### 数据向下流动
 
-无论是父组件还是子组件都无法确认是否具有状态，state 是组件内的密封状态。除了拥有和设置他的组件以外，其他任何组
-
-件都不能访问它。
-
+无论是父组件还是子组件都无法确认是否具有状态，state 是组件内的密封状态。除了拥有和设置他的组件以外，其他任何组件都不能访问它。
 组件可以选择传递它的 state 作为子组件的 props。
 
 ```jsx
@@ -629,5 +595,178 @@ function FormattedDate(props) {
 ```
 
 这通常称之为自顶向下或是单向性数据流。任何的 state 总是所属于特定的组件，而且从该 state 派生出的任何数据或 UI 只能影响低于它的组件。
-
 每个组件中的 state 都是相对独立的，同一个组件多次引用，其 state 也是互不影响的。
+
+
+
+## 事件处理
+
+> React 事件处理非常类似于在 DOM 元素上进行事件处理，但有一些语法差异。
+
+1. React 事件使用驼峰命名法而不是小写
+2. 在 JSX 中通过 function 进行事件处理而不是字符串
+
+例如在 HTML 中:
+
+```html
+<button onclick="handleClickBtn">Click Me</button>
+```
+
+在 JSX 中略有不同:
+
+```jsx
+<button onClick={handleClickBtn}></button>
+```
+
+3. 在 React 中不能通过 `return false` 的方式组织默认事件，只能调用 `e.preventDefault()`的方式
+
+在 HTML 中：
+
+```html
+<form onsubmit="console.log('You clicked submit.'); return false">
+  <button type="submit">Submit</button>
+</form>
+```
+
+在 React 中:
+
+```jsx
+function Form() {
+  function handSubmit(e) {
+    e.preventDefault();
+    console.log('You clicked submit.');
+  }
+
+  return (
+    <form onClick={handSubmit}>
+      <button type="submit">Submit</button>
+    </form>
+  )
+}
+```
+
+其中 e 是 React 中的综合对象，是结合 W3C 规定所合成的事件，不必担心浏览器兼容性。
+
+**注意**
+当使用 React 时，通常不需要调用 `addEventListener`方法对 DOM 元素进行监听，而是在元素初始化呈现的时提供一个监听器
+
+### 类组件事件
+在使用 ES6 的 Class 定义组件时，一个常见的模式是将事件的处理程序作为一个类方法。
+如下方用于用户操作按钮，切换 On 和 Off 的显示的组件：
+
+```jsx
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isToggleOn: false };
+
+    this.handleToggle = this.handleToggle.bind(this)
+  }
+
+  handleToggle() {
+    this.setState(preState => {
+      return {
+        isToggleOn: !preState.isToggleOn
+      }
+    })
+  }
+
+  render() {
+    return (
+      // <button onClick={ this.handleToggle.bind(this) } >  // 如果上面不绑定 这里也可以这样做
+      <button onClick={ this.handleToggle }>
+        {this.state.isToggleOn? "On" : "Off"}
+      </button>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Toggle />,
+  document.getElementById('root')
+)
+```
+
+
+
+### This 指向
+在 JSX 中需要小心关于 this 在回调中的指向，在 JavaScript 中类方法是默认不绑定 this 的。如果忘记绑定 this 那么在回调函数执行的时候 this 指向则是 `undefined`，这不是 react 特殊的行为，而是函数在 JavaScript 中工作的一部分。如果调用一个方法时后面没有括号，那么就应该绑定这个方法。
+以下两种方式都能避免每一次的 this 绑定
+
+1. 使用类字段语法
+
+```jsx
+class LoggingButton extends React.Component {
+  handleClick = () => {
+    console.log('this is:', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        Click me
+      </button>
+    );
+  }
+}
+```
+
+这个语法是将方法绑定到类的一个字段中，从而使方法中的 this 指向类的实例化本身。
+
+
+
+2. 回调使用箭头函数
+
+```jsx
+class LoggingButton extends React.Component {
+  handleClick() {
+    console.log('this is:', this);
+  }
+
+  render() {
+    return(
+      <button onClick={() => { this.handleClick() }}>
+        Click me
+      </button>
+    )
+  }
+}
+
+ReactDOM.render(
+  <LoggingButton />,
+  document.getElementById('root')
+)
+```
+
+这种形式的问题在于每一次重新呈现组件时都会创建一个不同的回调函数，在多数情况下没有问题，但是如果将回调作为子组件的 props 时可能会使子组件重新渲染，增加不必要的性能开销。所以通常建议在构造函数中绑定或使用类字段语法，以避免此类性能问题。
+
+
+
+### 事件处理函数传递参数
+
+在实际开发中，有时候需要额外向事件处理程序传递参数
+
+```jsx
+class Arguments extends React.Component {
+  handleClick() {
+    console.log(arguments)
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleClick.bind(this, 123, 'hhh')}>点击传参</button>
+        <button onClick={ (e) => {this.handleClick(123, 'hhh', e)}}>穿参2</button>
+      </div>
+    )
+  }
+}
+
+// 事件处理程序传参
+ReactDOM.render(
+  <Arguments />,
+  document.getElementById('root')
+)
+```
+
+在这两种情况中，代表 React 的综合对象 e，都作为最后一个参数传递，在 bind 方法中 e 会自动转发，在箭头函数中则需要手动绑定。

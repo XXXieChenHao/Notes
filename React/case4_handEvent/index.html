@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // ******************* 事件处理程序 **********************
+    // function handleClickBtn() {
+    //   alert('click button')
+    // }
+    // const element = (
+    //   <button onClick={handleClickBtn}>Click Me</button>
+    // )
+    // ReactDOM.render(
+    //   element,
+    //   document.getElementById('root')
+    // )
+
+    // function Form() {
+    //   function handSubmit(e) {
+    //     e.preventDefault();
+    //     console.log('You clicked submit.');
+    //   }
+
+    //   return (
+    //     <form onClick={handSubmit}>
+    //       <button type="submit">Submit</button>
+    //     </form>
+    //   )
+    // }
+
+    // ReactDOM.render(
+    //   <Form />,
+    //   document.getElementById('root')
+    // )
+
+    // ********************* 开关案例*****************************
+    // class Toggle extends React.Component {
+    //   constructor(props) {
+    //     super(props);
+    //     this.state = { isToggleOn: false };
+
+    //     // this.handleToggle = this.handleToggle.bind(this)
+    //   }
+
+    //   handleToggle = () => {
+    //     this.setState(preState => {
+    //       return {
+    //         isToggleOn: !preState.isToggleOn
+    //       }
+    //     })
+    //   }
+
+    //   render() {
+    //     return (
+    //       // <button onClick={ this.handleToggle.bind(this) }>  // 如果上面不绑定 这里也可以这样做
+    //       <button onClick={ this.handleToggle }>
+    //         {this.state.isToggleOn? "On" : "Off"}
+    //       </button>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <Toggle />,
+    //   document.getElementById('root')
+    // )
+
+
+    // ********************** this指向***************************
+    // 类的字段名
+    // class LoggingButton extends React.Component {
+    //   handleClick = () => {
+    //     console.log('this is:', this);
+    //   }
+
+    //   render() {
+    //     return (
+    //       <button onClick={this.handleClick}>
+    //         Click me
+    //       </button>
+    //     );
+    //   }
+    // }
+
+    // 箭头函数回调
+    // class LoggingButton extends React.Component {
+    //   handleClick() {
+    //     console.log('this is:', this);
+    //   }
+
+    //   render() {
+    //     return(
+    //       <button onClick={() => { this.handleClick() }}>
+    //         Click me
+    //       </button>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <LoggingButton />,
+    //   document.getElementById('root')
+    // )
+
+    class Arguments extends React.Component {
+      handleClick() {
+        console.log(arguments)
+      }
+
+      render() {
+        return (
+          <div>
+            <button onClick={this.handleClick.bind(this, 123, 'hhh')}>点击传参</button>
+            <button onClick={ (e) => {this.handleClick(123, 'hhh', e)}}>穿参2</button>
+          </div>
+        )
+      }
+    }
+
+    // 事件处理程序传参
+    ReactDOM.render(
+      <Arguments />,
+      document.getElementById('root')
+    )
+  </script>
+</body>
+</html>
