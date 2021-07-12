@@ -365,3 +365,68 @@ ReactDOM.render(
 
 ### 正确使用 key
 
+key 只有在数组上下文中才应该使用，与是否为 li 标签无关，同时 key 在兄弟元素中必须是唯一的。
+
+```jsx
+function ListItem(props) {
+  const value = props.value;
+  return (
+    // 1. 不在数组上下文中不需要使用 key
+    <li key={value.toString()}>{value}</li>
+  )
+}
+
+function NumberList(props) {
+  const numbers = props.numbers;
+  const ListItems = numbers.map( number => {
+    return (
+      // 2. 这里应该指定 key
+      <ListItem  
+        value={number} 
+      >
+        {number}
+      </ListItem>
+    )
+  })
+  return (
+    <ul>{ ListItems }</ul>
+  )
+}
+
+const numbers = [1, 2, 3, 4, 5]
+ReactDOM.render(
+  <NumberList numbers={numbers}/>,
+  document.getElementById('root')
+)
+```
+
+一个好的经验是在 map() 调用中才使用 key
+
+### 内联 map
+
+在 JSX 中也可以使用 map 方法，只需嵌套在**花括号**中
+
+```jsx
+function ListItem(props) {
+  const value = props.value;
+  return <li>{ value }</li>
+}
+
+function NumberList(props) {
+  const numbers = props.numbers
+  return (
+    <ul>
+      {numbers.map(number => {
+        return <ListItem value={number} key={number.toString()} />
+      })}
+    </ul>
+  )
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList numbers={numbers}/>,
+  document.getElementById('root')
+)
+```
+

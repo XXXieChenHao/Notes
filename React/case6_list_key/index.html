@@ -50,22 +50,78 @@
     // )
 
     // **************** key ********************
-    function TodoList() {
-      const todoList = [1, 1, 1, 1, 1];
-      const todoItems = todoList.map((todoItem, index) => {
-        return (
-          <li key={ index }>
-            {todoItem}
-          </li>
-        )
-      } )
+    // function TodoList() {
+    //   const todoList = [1, 1, 1, 1, 1];
+    //   const todoItems = todoList.map((todoItem, index) => {
+    //     return (
+    //       <li key={ index }>
+    //         {todoItem}
+    //       </li>
+    //     )
+    //   } )
+    //   return (
+    //     <ul>{ todoItems }</ul>
+    //   )
+    // }
+
+    // ReactDOM.render(
+    //   <TodoList />,
+    //   document.getElementById('root')
+    // )
+    
+
+    // ****************** correct key usage***************
+    // function ListItem(props) {
+    //   const value = props.value;
+    //   return (
+    //     // 不在数组上下文中不需要使用 key
+    //     <li key={value.toString()}>{value}</li>
+    //   )
+    // }
+
+    // function NumberList(props) {
+    //   const numbers = props.numbers;
+    //   const ListItems = numbers.map( number => {
+    //     return (
+    //       // 这里应该指定 key
+    //       <ListItem  
+    //         value={number} 
+    //       >
+    //         {number}
+    //       </ListItem>
+    //     )
+    //   })
+    //   return (
+    //     <ul>{ ListItems }</ul>
+    //   )
+    // }
+
+    // const numbers = [1, 2, 3, 4, 5]
+    // ReactDOM.render(
+    //   <NumberList numbers={numbers}/>,
+    //   document.getElementById('root')
+    // )
+
+    // **************** JSX 中嵌套 map ***************
+    function ListItem(props) {
+      const value = props.value;
+      return <li>{ value }</li>
+    }
+
+    function NumberList(props) {
+      const numbers = props.numbers
       return (
-        <ul>{ todoItems }</ul>
+        <ul>
+          {numbers.map(number => {
+            return <ListItem value={number} key={number.toString()} />
+          })}
+        </ul>
       )
     }
 
+    const numbers = [1, 2, 3, 4, 5];
     ReactDOM.render(
-      <TodoList />,
+      <NumberList numbers={numbers}/>,
       document.getElementById('root')
     )
   </script>
