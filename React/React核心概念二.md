@@ -430,3 +430,200 @@ ReactDOM.render(
 )
 ```
 
+
+
+## 表单
+
+在 React 中， HTML 表单元素与其他 DOM 元素的使用有很大的不同，因为 Form 表单会保持一些内部状态。
+
+Form 在 react 中与 HTML 一样都存在默认事件，点击提交按钮浏览器会打开一个新的页面，如果想要此效果 react 就会工作，如果想要在 js 中通过函数的方式访问表单中的数据，则需要**受控组件**
+
+
+
+### 受控组件
+
+在HTML 的 form 表单中，如input、select、textarea 等元素都是维持自身状态并根据用户输入进行更新，但在 react 中状态的更新都保存在组件中并通过 `setState()` 进行更新。
+
+将两者结合起来使 react 的 state 成为单一数据源。然后 react 组件渲染一个表单控制着随后用户的发生的操作。被 React 以这种方式控制取值的表单输入元素就叫做“受控组件”。
+
+```jsx
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: '' };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this); 
+  }
+
+  handleFormSubmit(event) {
+    console.log('A name was submitted: ' + this.state.value)
+    event.preventDefault();
+  }
+
+  handleInputChange(event) {
+    this.setState({
+      value: event.target.value
+    })
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleFormSubmit} >
+        <label>
+          Name: 
+          <input type="text" value={this.state.value} onChange={this.handleInputChange} />
+        </label>
+        <input type="submit" value="Submit"/>
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(
+  <NameForm />,
+  document.getElementById('root')
+)
+```
+
+当 value 属性被设置到表单元素中，显示的值总是 `this.state.value`，这使 React 的 state 成为唯一数据源。随后每一次键盘输入都会执行 `handleChange` 方法从而更新 React 状，显示的值也将会随着用户更新。
+
+对于受控组件来说，输入的值始终由 React 的 state 驱动。而这也意味值你不得不编写更多的代码，你才能将 value 传递给其他 UI 元素，或者通过其他事件处理函数重置。
+
+
+
+### TextArea 标签
+
+在 HTML 中 TextArea 元素通过子元素声明它的文字内容。
+
+```html
+<textarea>
+  textarea 的文字书写在其中
+</textarea>
+```
+
+而在 React 中则是使用 value 属性代替。
+
+```jsx
+class EssayForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { value: '这是写在 textarea 中的默认文字' };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleSubmit(event) {
+    console.log(this.state.value)
+    event.preventDefault();
+  }
+
+  handleChange(event) {
+    this.setState({
+      value: event.target.value
+    })
+  }
+
+  render() {
+    return(
+      <form onSubmit={ this.handleSubmit } >
+        <label>
+          文本域：
+          <textarea value={ this.state.value } onChange={ this.handleChange } ></textarea>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(
+  <EssayForm />,
+  document.getElementById('root')
+)
+```
+
+注意，其中初始化时对 `this.state.value` 进行了赋值，所以文本域中一开始就包含了一些文字。
+
+
+
+### Select 标签
+
+在 HTML 中 select 标签创建了一个下拉列表，例如创建一个最喜爱的运动列表
+
+```html
+<select>
+  <option value="篮球">篮球</option>
+  <option value="足球">足球</option>
+  <option value="台球" selected>台球</option>
+  <option value="棒球">棒球</option>
+</select>
+```
+
+其中默认选中*台球*，因为手动为台球选项设置了 selected 属性，而在 React 中，在根节点上设置 value 而不是通过 selected，这样可以保证在一个地方更新时就可以更方便管理受控组件。
+
+```jsx
+class SelectForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: '台球' };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+    console.log('changed');
+  }
+
+  handleSubmit(event) {
+    console.log('你最喜欢的运动是: ', this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={ this.handleSubmit }>
+        请选择您最喜欢的运动
+        <select onChange={ this.handleChange } value={ this.state.value} >
+          <option value="篮球">篮球</option>
+          <option value="足球">足球</option>
+          <option value="台球">台球</option>
+          <option value="棒球">棒球</option>
+        </select>
+        <input type="submit" value="Submit" />
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(
+  <SelectForm />,
+  document.getElementById('root')
+)
+```
+
+input、textarea 和 select 的工作原理都非常相似，都是接收一个 value 属性可以用来在受控组件中使用
+
+React 的 select 也接受同时选中多个属性
+
+```jsx
+<select multiple={true} value={['B', 'C']}>
+```
+
+
+
+### file 标签
+
+在 HTML 中，input 标签的 file 类型是提供一个给用户一个从本地存储中选择一个或多个文件上传到服务器或调用 JavaScript APi 进行处理的方式。
+
+```html
+<input type="file" />
+```
+
+因为它的值是只读的，所以在 React 中它是一个不可控组件
+
+
+

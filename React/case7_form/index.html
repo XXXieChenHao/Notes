@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // **************** Form ******************
+    // class NameForm extends React.Component {
+    //   constructor(props) {
+    //     super(props);
+    //     this.state = { value: '汐潮' };
+
+    //     this.handleInputChange = this.handleInputChange.bind(this);
+    //     this.handleFormSubmit = this.handleFormSubmit.bind(this); 
+    //   }
+
+    //   handleFormSubmit(event) {
+    //     console.log('A name was submitted: ' + this.state.value)
+    //     event.preventDefault();
+    //   }
+
+    //   handleInputChange(event) {
+    //     this.setState({
+    //       value: event.target.value
+    //     })
+    //   }
+
+    //   render() {
+    //     return (
+    //       <form onSubmit={this.handleFormSubmit} >
+    //         <label>
+    //           Name: 
+    //           <input type="text" value={this.state.value} onChange={this.handleInputChange} />
+    //         </label>
+    //         <input type="submit" value="Submit"/>
+    //       </form>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <NameForm />,
+    //   document.getElementById('root')
+    // )
+
+    // ***************** textarea **************************8
+    // class EssayForm extends React.Component {
+    //   constructor(props) {
+    //     super(props)
+    //     this.state = { value: '这是写在 textarea 中的默认文字' };
+
+    //     this.handleSubmit = this.handleSubmit.bind(this);
+    //     this.handleChange = this.handleChange.bind(this);
+    //   }
+
+    //   handleSubmit(event) {
+    //     console.log(this.state.value)
+    //     event.preventDefault();
+    //   }
+
+    //   handleChange(event) {
+    //     this.setState({
+    //       value: event.target.value
+    //     })
+    //   }
+
+    //   render() {
+    //     return(
+    //       <form onSubmit={ this.handleSubmit } >
+    //         <label>
+    //           文本域：
+    //           <textarea value={ this.state.value } onChange={ this.handleChange } ></textarea>
+    //         </label>
+    //         <input type="submit" value="Submit" />
+    //       </form>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <EssayForm />,
+    //   document.getElementById('root')
+    // )
+
+    // ************** Select ********************
+    // class SelectForm extends React.Component {
+    //   constructor(props) {
+    //     super(props);
+    //     this.state = { value: '台球' };
+
+    //     this.handleChange = this.handleChange.bind(this);
+    //     this.handleSubmit = this.handleSubmit.bind(this);
+    //   }
+
+    //   handleChange(event) {
+    //     this.setState({value: event.target.value});
+    //     console.log('changed');
+    //   }
+
+    //   handleSubmit(event) {
+    //     console.log('你最喜欢的运动是: ', this.state.value);
+    //     event.preventDefault();
+    //   }
+
+    //   render() {
+    //     return (
+    //       <form onSubmit={ this.handleSubmit }>
+    //         请选择您最喜欢的运动
+    //         <select onChange={ this.handleChange } value={ this.state.value} >
+    //           <option value="篮球">篮球</option>
+    //           <option value="足球">足球</option>
+    //           <option value="台球">台球</option>
+    //           <option value="棒球">棒球</option>
+    //         </select>
+    //         <input type="submit" value="Submit" />
+    //       </form>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <SelectForm />,
+    //   document.getElementById('root')
+    // )
+
+    // ***************<select multiple={true} value={['B', 'C']}>***********
+    // class SelectForm extends React.Component {
+    //   constructor(props) {
+    //     super(props);
+    //     this.state = { value: '台球' };
+
+    //     this.handleChange = this.handleChange.bind(this);
+    //     this.handleSubmit = this.handleSubmit.bind(this);
+    //   }
+
+    //   handleChange(event) {
+    //     this.setState({value: event.target.value});
+    //     console.log('changed');
+    //   }
+
+    //   handleSubmit(event) {
+    //     console.log('你最喜欢的运动是: ', this.state.value);
+    //     event.preventDefault();
+    //   }
+
+    //   render() {
+    //     return (
+    //       <form onSubmit={ this.handleSubmit }>
+    //         请选择您最喜欢的运动
+    //         <select multiple={true} onChange={ this.handleChange } value={['篮球','台球']} >
+    //           <option value="篮球">篮球</option>
+    //           <option value="足球">足球</option>
+    //           <option value="台球">台球</option>
+    //           <option value="棒球">棒球</option>
+    //         </select>
+    //         <input type="submit" value="Submit" />
+    //       </form>
+    //     )
+    //   }
+    // }
+
+    // ReactDOM.render(
+    //   <SelectForm />,
+    //   document.getElementById('root')
+    // )
+
+
+    // *********************** file ***************************
+    
+  </script>
+</body>
+</html>
