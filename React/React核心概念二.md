@@ -615,6 +615,125 @@ React 的 select 也接受同时选中多个属性
 
 
 
+### 处理多个元素
+
+当需要处理多个受控制的输入元素时，需要添加一个 name 属性给每一个元素并且让函数根据 `event.target.name` 的值选择做些什么。
+
+```jsx
+class Multiple extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      check: false,
+      name: '',
+      sports: '篮球'
+    }
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleInputChange(event) {
+    const target = event.target;
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    const name = target.name;
+    
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit(event) {
+    console.log(this.state)
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={ this.handleSubmit }>
+        <label>
+          checkbox:
+          <input 
+            type="checkbox" 
+            name="check" 
+            checked={ this.state.check } 
+            onChange={ this.handleInputChange }
+          />
+        </label>
+        <label>
+          Your name is :
+          <input 
+            type="text"
+            name="name"
+            value={ this.state.name }
+            onChange={ this.handleInputChange }
+          />  
+        </label>
+        <select 
+          name="sports" 
+          value={ this.state.sports }
+          onChange={ this.handleInputChange }
+        >
+          <option value="篮球">篮球</option>
+          <option value="足球">足球</option>
+          <option value="羽毛球">羽毛球</option>
+        </select>
+        <input type="submit" value="submit"/>
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Multiple />,
+  document.getElementById('root')
+)
+```
+
+这里我们直接使用了 ES6 的方式去修改 React 中的状态，如果是 ES5则需要如此：
+
+```js
+var partialState = {};
+partialState[name] = value;
+this.setState(partialState);
+```
+
+因为 setState 是局部更改，所以只需要调用部分更改即可。
+
+
+
+### 受控输入 null
+
+如果受控组件中指定了 value 属性则无法进行用户编辑，如果可以编辑则是因为意外的将值置为 null
+
+```jsx
+ReactDOM.render(
+  <input value="hi" />, 
+  document.getElementById('root')
+);
+
+setTimeout(function() {
+  ReactDOM.render(
+    <input value={null} />, 
+    document.getElementById('root')
+  );
+}, 3000);
+```
+
+前三秒输入框无法编辑，三秒钟以后可以编辑。
+
+
+
+### 受控组件替代品
+
+有时编写受控组件时乏味的，因为你需要为数据的每一种更改方式编写事件处理程序，并通过 React 管理相应组件。这对于转变一个之前写好的代码到 React ，或者是整合一个不包含 React 库的应用的时候非常头疼，这时候可能希望检出不受控组件，这是实现输入表单的另一种技术。
+
+如果您正在寻找包括验证、跟踪访问字段和处理表单提交在内的完整解决方案，那么Formik是最受欢迎的选择之一。然而，它是建立在受控组件和状态管理的相同原则之上的——所以不要忽视学习它们。
+
+
+
+
+
 ### file 标签
 
 在 HTML 中，input 标签的 file 类型是提供一个给用户一个从本地存储中选择一个或多个文件上传到服务器或调用 JavaScript APi 进行处理的方式。
@@ -626,4 +745,8 @@ React 的 select 也接受同时选中多个属性
 因为它的值是只读的，所以在 React 中它是一个不可控组件
 
 
+
+## 状态提升
+
+通常几个组件可能都需要反应状态的变化，推荐将共享状态提升至他们的最近的共同祖先中。
 
