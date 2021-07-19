@@ -1019,3 +1019,108 @@ ReactDOM.render(
 
 > React 中含有非常强大的组合模式，官方推荐使用组合而非继承来实现组件重用。
 
+组件可以接受任意 props，包括基本数据类型，React 元素以及函数。
+
+### 包含关系
+
+一些组件一开始并不清楚他们的子组件。对于表示通用 “框” 或是侧边栏尤为常见。官方推荐每一个组件使用特殊的子元素prop 来直接传递给给子元素的输出。
+
+这使得其他组件可以通过嵌套JSX来传递任意的子组件
+
+```jsx
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      { props.children }
+    </div>
+  )
+}
+
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue" >
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  )
+} 
+
+ReactDOM.render(
+  <WelcomeDialog />,
+  document.getElementById('root')
+)
+```
+
+任何包含在组件中的内容，都会被传入到子组件的 props.children 属性中，传入的元素最终会呈现在输出里。
+
+而有时可能组件需要多个 holes 时可以自己定义：
+
+```jsx
+const Contacts = _ => <span>Contacts</span>
+const Chat = _ => <span>Chat</span>
+
+function SplitPane(props) {
+  return (
+    <div>
+      <div>
+        { props.left }
+      </div>
+      <div>
+        { props.right }
+      </div>  
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <SplitPane 
+    	left = { <Contacts /> } 
+    	right = { <Chat /> }
+    />
+  )
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+)
+```
+
+
+
+### 专门化
+
+有时候我们认为部分组件可能是其他组件的特殊组件，例如 欢迎弹出框就是一个特殊的弹出框组件。
+
+在 React 中，我们也可以通过组合来实现这一点。“特殊”组件可以通过 props 定制并渲染“一般”组件：
+
+```jsx
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Welcome"
+      message="Thank you for visiting our spacecraft!" />
+  );
+}
+```
+
+
+
