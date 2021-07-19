@@ -750,3 +750,272 @@ setTimeout(function() {
 
 通常几个组件可能都需要反应状态的变化，推荐将共享状态提升至他们的最近的共同祖先中。
 
+随着下面的案例体会状态提升的过程
+
+### 温度计算器
+
+编写一个温度计计算器，用户输入温度，当温度大于 100 时，页面效果为“水开了。”
+
+```jsx
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>水开了。</p>
+  } else {
+    return <p>水还没开。</p>
+  }
+}
+
+class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { temperature: '' };
+    this.handleIptChange = this.handleIptChange.bind(this);
+  }
+
+  handleIptChange(event) {
+    this.setState({
+      temperature: event.target.value
+    })
+  }
+
+  render() {
+    const temperature = this.state.temperature;
+    return (
+      <div>
+        <label>
+          请输入温度:  
+          <input type="text" value={temperature} onChange={ this.handleIptChange } />
+        </label>
+        <BoilingVerdict celsius={temperature} />
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+)
+```
+
+### 第二个输入
+
+除了摄氏温度输入外，我们还提供华氏温度输入，并且它们保持同步
+
+```jsx
+const scaleName = {
+  c: '摄氏度',
+  f: '华氏度'
+}
+
+
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>水开了。</p>
+  } else {
+    return <p>水还没开。</p>
+  }
+}
+
+class Calculator extends React.Component {
+  render() {
+    return (
+      <div>
+        <TemperatureInput scale='c' />  
+        <TemperatureInput scale='f' />  
+      </div>
+    )
+  }
+
+}
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { temperature: '' };
+    this.handleIptChange = this.handleIptChange.bind(this);
+  }
+
+  handleIptChange(event) {
+    this.setState({
+      temperature: event.target.value
+    })
+  }
+
+  render() {
+    const temperature = this.state.temperature;
+    const scale = this.props.scale;
+    return (
+      <div>
+        <label>
+          请输入{scaleName[scale]}:  
+          <input type="text" value={temperature} onChange={ this.handleIptChange } />
+        </label>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+)
+```
+
+
+
+### 编写转换函数
+
+```jsx
+function toCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+```
+
+这两个函数可以转换温度，所以再编写一个函数用于接收温度参数和转换函数参数，并且最终返回保留三位小数的另一个温度的数字
+
+```jsx
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return ''
+  }
+
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+```
+
+### 状态提升
+
+两个TemperatureInput 组件都是独立的保存他们的状态在本地，然而需求则是两者相互同步影响。
+
+在 React 中，共享状态是通过移动状态到需要使用其最近的公共祖先来完成的。这就是**状态提升**。我们将从 TemperatureInput 组件中移除本地状态，并且将其移动到 Calculator 中。
+
+如果 Calculator 组件拥有了共享状态，它将成为两个输入中的唯一数据源。它能保证两者都拥有一致的值。因为两者的 props 都来自于父组件，所以两个输入能够一直的同步影响。
+
+```jsx
+const scaleName = {
+  c: '摄氏度',
+  f: '华氏度'
+}
+
+function toCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return ''
+  }
+
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>水开了。</p>
+  } else {
+    return <p>水还没开。</p>
+  }
+}
+
+class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+    this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+    this.state = { 
+      temperature: '',
+      scale: 'c'
+    }
+  }
+
+  handleCelsiusChange(temperature) {
+    this.setState({ scale: 'c', temperature })
+  }
+
+  handleFahrenheitChange(temperature) {
+    this.setState({ scale: 'f', temperature })
+  }
+
+  render() {
+    const scale = this.state.scale
+    const temperature = this.state.temperature;
+    const celsius = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+    const fahrenheit = scale === 'f' ? tryConvert(temperature, toFahrenheit) : temperature;
+    return (
+      <div>
+        <TemperatureInput 
+          scale='c' 
+          temperature = { celsius }
+          onTemperatureChange = { this.handleFahrenheitChange }
+        />  
+        <TemperatureInput 
+          scale='f'
+          temperature = { fahrenheit }
+          onTemperatureChange = { this.handleFahrenheitChange }
+        />
+        <BoilingVerdict celsius={ parseFloat(celsius) }/>
+      </div>
+    )
+  }
+
+}
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleIptChange = this.handleIptChange.bind(this);
+  }
+
+  handleIptChange(event) {
+    this.props.onTemperatureChange(event.target.value)
+  }
+
+  render() {
+    const temperature = this.props.temperature;
+    const scale = this.props.scale;
+    return (
+      <div>
+        <label>
+          请输入{scaleName[scale]}:  
+          <input type="text" value={temperature} onChange={ this.handleIptChange } />
+        </label>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+)
+```
+
+
+
+**重点**
+
+1. 单一数据源
+2. 子组件使用 this.props.属性名
+3. 子组件更新时调用父组件的方法，在父组件标签中使用自定义监听，并且监听方法无特殊含义
+
+
+
+## 组合 vs 继承
+
+> React 中含有非常强大的组合模式，官方推荐使用组合而非继承来实现组件重用。
+
