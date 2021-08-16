@@ -2,19 +2,19 @@
 > 路漫漫其修远兮，吾将上下而求索
 
 ## 一段介绍
-可能常常听到 TypeScript 是 JavaScript 的一种 “风格” 或是 “变种”，在现代编程语言中 TS 与 JS 两者之间的关系是独一无二的，所以了解两者之间的关系可以帮助理解 TypeScript 是如何添加到 JavaScript 中的。
+可能常常听到 TypeScript 是 JavaScript 的一种 “风格” 或是 “变种”，在现代编程语言中 TS 与 Js 两者之间的关系是独一无二的，所以了解两者之间的关系可以帮助理解 TypeScript 是如何添加到 JavaScript 中的。
 
 ### 一段简单的历史
-JavaScript 生命的开始是在浏览器中的一段简单的脚本语言。在刚刚被发生的时候，它只是被期望嵌入到一个 web 页面当中，甚至几十行代码都是不同寻常的。正因如此，早期浏览器执行这种代码速度非常缓慢，然而，随着时间的发展，JS 变得越来越流行并且很多开发者使用它来创造交互体验。
+JavaScript 生命的开始是在浏览器中的一段简单的脚本语言。在刚刚被发生的时候，它只是被期望嵌入到一个 web 页面当中，甚至几十行代码都是不同寻常的。正因如此，早期浏览器执行这种代码速度非常缓慢，然而，随着时间的发展，Js 变得越来越流行并且很多开发者使用它来创造交互体验。
 
 Web 浏览器开发人员不断优化执行引擎并且添加 API，使开发人员更多地使用。浏览器经常运行跨越数十万行代码的应用程序。
 
-不仅如此，JS 如今已经变得足够流行，可以在浏览器的环境意外使用，如在 NodeJs 中实现 JS 服务器。
+不仅如此，Js 如今已经变得足够流行，可以在浏览器的环境意外使用，如在 NodeJs 中实现 Js 服务器。
 
-总而言之，JS 是从一个为了快速使用而设计的语言，成长到如今可以编写具有数百万行代码的应用程序的成熟的工具。
+总而言之，Js 是从一个为了快速使用而设计的语言，成长到如今可以编写具有数百万行代码的应用程序的成熟的工具。
 
-每一门语言都有自己的怪癖，而 JS 的起步也让它同样拥有这种问题，例如：
-1. JS 中判断操作符
+每一门语言都有自己的怪癖，而 Js 的起步也让它同样拥有这种问题，例如：
+1. Js 中判断操作符
 ```javascript
 if('' == 0) {
   // 结果为 true
@@ -77,3 +77,48 @@ TypeScript 也是编程语言，它保留了 Js 在执行时的行为。例如�
 
 
 ## 技术重点
+
+### 基本原则
+在 JavaScript 中每一个值都有不同的行为，可以通过不同的操作观察到这些行为。虽然听起来抽线，但是参考例子，考虑我们可能运行在变量 message 上的一些操作。
+```javascript
+// 访问 message 上的 toLowerCase 属性并且带哦用
+message.toLowerCase();
+// 调用 message 方法
+message();
+```
+如果我们拆开来看，第一行访问一个 toLowerCase 属性并且调用了它，第二行则直接尝试调用 message 方法。但是假设我们不知道 message 的值，-并且它是一个常见的-我们不能确切的说出运行代码后得到的结果。每个操作的行为完全依赖于最初的值。
+- message 是否可以调用？
+- 是否包含 toLowerCase 属性？
+- 如果存在，toLowerCase 是否可以调用？
+- 如果两者都可以调用，则会返回什么？
+这些问题的答案通常都是我们在写 JavaScript 代码时牢记于心的，并且我们只希望我们记住的细节都是正确的。
+
+假设 message 是如下方式声明的。
+```javascript
+const message = 'Hello Xichao'
+```
+可以猜测，如果尝试运行 `message.toLowerCase()`,将会得到小写相同的字符串。如果熟悉 JavaScript 则会知道第二行代码运行会报错
+```javascript
+TypeError: message is not a function
+```
+如果可以避免诸如此类的错误就特别好。
+当我们运行代码，JavaScript 运行时通过计算值的类型进行选择-行为排序和其拥有的能力。
+这是TypeError暗指的一部分-它说字符串"Hello World!"不能作为函数调用。
+对于一些值，如原始字符串或数字，能够确认值的类型在运行时使用 typeof 操作符。但是对于其他的如函数，没有相应的机制在运行时确认类型。考虑如下函数：
+```js
+function fn(x) {
+  x.flip()
+}
+```
+我们能通过阅读代码观察到这个函数将只能工作通过一个对象调用 flip 属性，并且 JavaScript 并没有一种方式能够在运行时查看信息。在 Js 中唯一纯粹的方式去获取一个特殊的值就是去调用并且发生了什么。这种行为使得很难在代码运行前语言，也意味着很难在编写代码时得知代码将如何执行。
+
+从这个角度看，
+
+
+
+
+Seen in this way, a type is the concept of describing which values can be passed to fn and which will crash. JavaScript only truly provides dynamic typing - running the code to see what happens.
+
+The alternative is to use a static type system to make predictions about what code is expected before it runs.
+
+### 
