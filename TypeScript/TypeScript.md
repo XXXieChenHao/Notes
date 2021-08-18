@@ -111,14 +111,110 @@ function fn(x) {
 }
 ```
 我们能通过阅读代码观察到这个函数将只能工作通过一个对象调用 flip 属性，并且 JavaScript 并没有一种方式能够在运行时查看信息。在 Js 中唯一纯粹的方式去获取一个特殊的值就是去调用并且发生了什么。这种行为使得很难在代码运行前语言，也意味着很难在编写代码时得知代码将如何执行。
+从这个角度看，类型是描述那些值可以传递给 fn 并且哪些值将会崩溃。JavaScript 只真正提供动态类型-运行时才知道发生了什么。
+另一种供选择的方式是在代码运行之前使用静态类型系统预测预期代码
 
-从这个角度看，
+**1. 静态类型检查**
+重新思考之前尝试将字符串作为方法调用得到的类型错误。大多数人们不喜欢在运行代码时出现任何错误，这些都被认为是 bug！并且当编写新的代码时，总会尝试尽可能避免引入新的 bug。
+如果只是添加大量代码，保存文件，重新运行代码，并且立即看到错误，我们可能会很快找出问题所在；但情况并非总是如此，我们可能没有对某一功能进行足够的测试，所以可能永远不会遇到运行时可能抛出的错误！或者如果我们很幸运遇到这个错误，我们可能最终会进行大规模的重构并且添加大量不同的代码，而又不得不去挖掘这些代码。
+理想情况下，我们想要一个工具帮助我们在代码运行之前找到这些问题。这就是静态类型检查工具像 TypeScript 一样。静态类型系统描述了值在项目运行时的形状和行为。使用一个类型检查像 TypeScript 会使用这些信息并且告诉我们什么时候会出现问题。
+```js
+const message = "hello!";
+ 
+message();
+// 这个表达式不能被调用，字符串类型没有可被调用的方法
+```
+在 TypeScript 中在使用初始值运行代码之前将会提示一个错误信息。
+
+**2. 非例外状况错误（Non-exception Failures）**
+到目前为止所讨论的是确定的运行时错误 - JavaScript 告诉我们在运行时有些事情是黄喵的。出现这些情况是因为 ECMAScript 中说明了语言在遇到特殊情况时的行为。
+例如，规范中声明调用某些不能够被调用的东西时应该抛出错误。可能听起来像是 “明显的行为”，但是你可以想象，访问对向上不存在的属性时今天也应该抛出错误，相反 JavaScript 给了不同的行为并且返回它得值为 undefined。
+```javascript
+const user = {
+  name: "Daniel",
+  age: 26,
+};
+user.location; // returns undefined
+```
+
+最终，一个静态类型系统不得不调用那些在系统中被标记错误的代码，即使它是 “有效的” JavaScript 代码也不会立即抛出异常，在 TypeScript 中下面的代码将产生一个关于location未定义的错误:
+```tsx
+const user = {
+  name: "Daniel",
+  age: 26,
+};
+ 
+user.location;
+// Property 'location' does not exist on type '{ name: string; age: number; }'.
+// Location 属性不存在于类型 '{ name: string; age: number; }' 上
+```
+虽然有时这意味着你可以在表达内容方面的权衡，但目的是捕获程序中的合法错误。TypeScript捕获了很多合法的错误。
+例如
+*打字错误：*
+```tsx
+const announcement = "Hello World!";
+announcement.toLocaleLowercase();
+announcement.toLocalLowerCase();
+// Property 'toLocaleLowercase' does not exist on type '"Hello World!"'. Did you mean 'toLocaleLowerCase'?
+```
+*未调用方法：*
+```tsx
+function flipCoin() {
+  // 这里 Math.random 而不是 Math.random()
+  return Math.random < 0.5;
+// Operator '<' cannot be applied to types '() => number' and 'number'.
+}
+```
+
+*基础逻辑错误：*
+```tsx
+const value = Math.random() < 0.5 ? "a" : "b";
+if (value !== "a") {
+  // ...
+} else if (value === "b") {
+// 这里的 value === 'b' 总是返回 false，因为 类型 'a' 与 'b' 没有重合部分
+}
+```
+
+**3. 类型的工具**
+TypeScript 能够抓住 bug 当我们在代码中制造了一个错误，这是很好的，但是 TypeScript 也能够从一开始就防止我们制造这些错误。
+类型选择器有一些信息去检查我们是否访问了正确的变量属性或其他属性，一旦它拥有了信息，它也可以提供你可能想要使用的属性建议。
+这意味着 TypeScript 也能够编写代码，在编写代码过程中其核心类型检查器可以提供错误消息和代码完成。
+
+### 基础类型
+这里包含了大多数在 JavaScript 中可以找到的基础类型，并且在 TypeScrtip 中解释相应的描述类型。这不是一个详尽的列表，未来的章节将描述更多命名和使用其他类型的方法
+类型能够出现在很多地方而不仅是类型注释，在了解类型本身的同时也能了解到在哪些地方引用这些类型形成新的构造。
+我们将从回顾你可能在写 Js 或是 Ts 代码时遇到的最基础和普通的类型。这些将在以后形成更复杂类型的核心构建块。
+
+**1. 基本类型 String、Number、Boolean**
+Js 有三个非常常见被使用的基础类型：string，number， 和 boolean。每一个在 Ts 中都有相应的，如你所愿，如果你是用 Js 中的typeof 操作符查看这些类型时你可以看到它们在 Ts 有相同的类型名字：
+- string 表示字符串如： "Hello, world"
+- number 是数字，如 42， JavaScript没有整数的特殊运行时值， 所以没有int或float的等价物——所有的都是数字
+- boolean 是只有 true 和 false 两个值的类型
+
+类型名称String、Number和Boolean(以大写字母开头)是合法的，但是要参考一些在代码中很少出现的特殊内置类型。类型经常使用 string，number或者boolean类型。
+
+**2. 数组 Arrays**
+对于特殊类型的数组如 `[1, 2, 3]`, 你可以使用 `number[]` 语法；这语法适用于任何类型（如字符串数组 string[] 等）。你也可能看到`Array<number>` 这样的写法，这意味着相同的事情，在讨论泛型时，我们将学习更多关于语法T<U>的内容。
+注意[数字]是不同的;请参阅元组类型一节。
+
+**3. 任意类型 any**
+Ts 也有一个特殊的类型，any，你能够使用它当你不想要因为某一特定值导致类型检测错误。当一个值是 any 类型，你能够访问任何它的属性（反过来它将是 any 类型），像函数一样调用它，将它赋给(或从)任何类型的值，或几乎任何语法上合法的其他东西:
+```tsx
+let obj: any = { x: 0 };
+// 下面的代码不会抛出编译器错误。
+// 使用' any '禁用所有进一步的类型检查，这是假定的
+// 假设你比TypeScript更了解环境。
+obj.foo();
+obj();
+obj.bar = 100;
+obj = "hello";
+const n: number = obj;
+```
+当你不想只为了 Ts 中某一行代码的正确而写一个长类型 any 类型是有用的。
+
+*编译器标志 noImplicitAny*
+当你不没有指定类型并且 Ts 不能从上下文中腿短出来的时候，编译器通常会默认为any。但是，您通常希望避免这种情况，因为任何都没有进行类型检查。使用编辑器 noImplicitAny 将任何隐式any标记为错误。
 
 
-
-
-Seen in this way, a type is the concept of describing which values can be passed to fn and which will crash. JavaScript only truly provides dynamic typing - running the code to see what happens.
-
-The alternative is to use a static type system to make predictions about what code is expected before it runs.
-
-### 
+**4. 变量的类型注释**
