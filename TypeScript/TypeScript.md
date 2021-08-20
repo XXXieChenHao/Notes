@@ -218,3 +218,298 @@ const n: number = obj;
 
 
 **4. 变量的类型注释**
+当你声明了一个变量使用 const，var 或者 let，你能够随意的添加类型注释明确的指定变量的类型：
+```tsx
+let myName: string = "Xichao";
+```
+Ts 不使用类型在左侧的声明方式像，int x = 0; 类型注释总是在输入的内容之后。
+
+然而在大多数情况下是不需要的，Ts 会随时自动推断代码中的类型。例如变量的类型是根据其初始化式的类型推断出来的。
+```tsx
+//  不需要类型注释——'myName'推断为类型'string'
+let myName = "Xichao";
+```
+对于大部分情况你不需要学习接口的规则，如果你敢开始，尝试比思考更少的使用类型注解-你可能惊喜，你可能会惊讶地发现，你只需要这么少的TypeScript 就能完全理解发生了什么。
+
+**5. 函数**
+函数是 Js 中传递数据的主要方式。Ts 允许指定函数输入和输入的值的类型。
+
+*5.1 参数类型注解*
+当声明了一个函数，你能每一个参数之后添加类型注解，以声明函数接收何种类型的参数。参数类型注解在参数名之后：
+```tsx
+function greet(name: string) {
+  console.log("Hello, " + name.toUpperCase() + "!!");
+}
+```
+当一个参数有了类型注解，调用函数传参时会进行校验：
+```tsx
+// 如果执行会出现错误
+greet(42);
+// 警告提示：Argument of type 'number' is not assignable to parameter of type 'string'.
+```
+即使你没有参数类型竹节，Ts 仍然会检查你传递参数的数量是否正确
+
+*5.2 返回类型注解*
+你也能添加返回类型注解。返回类型注释出现在参数列表之后:
+```tsx
+function getFavoriteNumber(): number {
+  return 26;
+}
+```
+像变量类型注解一样，你通常不需要返回类型注解，因为 Ts 会根据返回语句推断出函数的返回类型。
+上面例子中的类型注解没有任何改变，有些代码库会显式地指定返回类型，以用于文档编制、防止意外更改或只是出于个人偏好。
+
+*5.3 匿名函数*
+你们函数与声明式函数有一点不同，当一个函数出现在 Ts 可以决定它将如何被调用的位置时，该函数的参数会自动被指定类型。
+```tsx
+// 这里没有类型注解，但是 Ts 不会标记为错误
+const names = ["Alice", "Bob", "Eve"];
+ 
+// 函数的上下文类型
+names.forEach(function (s) {
+  console.log(s.toUppercase());
+  // Property 'toUppercase' does not exist on type 'string'. Did you mean 'toUpperCase'?
+});
+ 
+// Contextual typing also applies to arrow functions
+names.forEach((s) => {
+  console.log(s.toUppercase());
+  // Property 'toUppercase' does not exist on type 'string'. Did you mean 'toUpperCase'?
+});
+```
+
+即使参数没有类型注解，TypeScript 使用forEach函数的类型以及数组的推断类型来确定 s 将拥有的类型。
+这个过程被称为上下文类型，因为函数执行的上下文会告之其类型。
+类似于推理规则，你不需要明确了解如何发生，但理解它的发生可以帮助您了解到什么时候不需要类型注解。
+
+**6. 对象类型**
+除了基本元素外，最常见的类型就是对象类型。这指的是带有属性的任意 Js 值，几乎是所有属性。声明一个对象类型，只需列出属性和对应的类型。
+例如：
+```tsx
+// 参数的类型注解就是对象注解
+function printCoord(pt: { x: number; y: number }) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+printCoord({ x: 3, y: 7 });
+```
+为参数的两个属性进行类型注释 - x 和 y - 两个类型都是 number。可以使用逗号 (,) 或者分号 (;) 进行分割属性，并且最后一个分割是可选的。
+每个属性的类型部分也是可选的，如果你不特殊指定类型，它将被认为是 any 类型。
+
+*可选属性*
+对象类型也能够执行全部属性中的某一个为可选属性。如果这么做的话添加一个问号 (?) 在属性名的后面
+```tsx
+function printName(obj: { first: string; last?: string }) {
+  // ...
+}
+// Both OK
+printName({ first: "Bob" });
+printName({ first: "Alice", last: "Alisson" });
+```
+在 Js 中如果访问某个属性但是该属性不存在，你将会得到返回值为 undefined 而不是运行错误。正因如此当从可选属性中读取时应当在试用期那先检验是否为 undefined。
+```tsx
+function printName(obj: { first: string; last?: string }) {
+  // Error - might crash if 'obj.last' wasn't provided!
+  console.log(obj.last.toUpperCase());
+  // Object is possibly 'undefined'.
+  if (obj.last !== undefined) {
+    // OK
+    console.log(obj.last.toUpperCase());
+  }
+ 
+  // A safe alternative using modern JavaScript syntax:
+  console.log(obj.last?.toUpperCase());
+}
+```
+
+
+**7. 联合类型**
+Ts 的类型系统允许您使用各种各样的操作符从现有类型构建新的类型。
+
+*7.1 定义联合类型*
+组合类型的第一个方法是联合类型。一个联合类型是由两个或多个其他类型组成的类型，表示可能是其中一种类型的值。将每一种类型成为联合类型的成员。
+```tsx
+function printId(id: number | string) {
+  console.log("Your ID is: " + id);
+}
+// OK
+printId(101);
+// OK
+printId("202");
+// Error
+printId({ myID: 22342 });
+//Argument of type '{ myID: number; }' is not assignable to parameter of type 'string | number'. Type '{ myID: number; }' is not assignable to type 'number'.
+```
+
+*7.2 使用联合类型*
+这是简单的去提供一个匹配联合类型的值 - 只需匹配联合类型成员中的任意一个。
+Ts 将会只允许你去做一些联合类型中每一个成员都有效的事情。例如，如果你有一个联合类型 string ｜ number 你不能使用只在字符串上有效的方法
+```tsx
+function printId(id: number | string) {
+  console.log(id.toUpperCase());
+  // Property 'toUpperCase' does not exist on type 'string | number'. Property 'toUpperCase' does not exist on type 'number'.
+}
+```
+解决的方法是缩小联合代码的范围，就像在没有类型注释的 Js 一样。当 Ts 可以根据代码结构为某个值推断出更具体的类型的时候，就会发生收缩。
+例如， Ts 知道只有一个 string 的值将会被 typeof 为 string
+```tsx
+function printId(id: number | string) {
+  if (typeof id === "string") {
+    // In this branch, id is of type 'string'
+    console.log(id.toUpperCase());
+  } else {
+    // 这里 id 是
+    console.log(id);
+  }
+}
+```
+另一个例子使用方法类似 Array.isArray
+```tsx
+function welcomePeople(x: string[] | string) {
+  if (Array.isArray(x)) {
+    // Here: 'x' is 'string[]'
+    console.log("Hello, " + x.join(" and "));
+  } else {
+    // Here: 'x' is 'string'
+    console.log("Welcome lone traveler " + x);
+  }
+}
+```
+注意在 else 分支上不需要做任何特殊的操作 - 如果 x 不是 string[] 那一定是 string。
+有时你会有一个所有成员都有共同点的联盟。例如每个 arrays 和 strings 都有一个 slice 方法。如果联合中的每一个成员都有一个共同属性，你不需要缩小就可以使用这个属性：
+```tsx
+// 返回的类型推断为 numberp[] 或 string
+function getFirstThree(x: number[] | string) {
+  return x.slice(0, 3);
+}
+```
+令人困惑的是联合类型的并集可能具有这些属性的交集。这并不是一个意外 - 联合这个名字来源于类型理论。联合 number ｜ string 是由每个类型的值组合而成。注意给定两个集合，每个集合都有相应的事实，只有这些事实的交集应用于集合本身。例如如果有一个房间的带着帽子的高个子人，另一个房间里是带着帽子讲西班牙语的人，当两间屋子联合在一起时可以得知每一个人都带着一顶帽子。
+
+
+**8. 类型别名**
+我们一直通过在类型注释中使用对象类型和联合联合类型，这虽然很方便，但通常希望多次使用同一类型并通过单个名称访问它。
+类型别名就是任何类型的名称：
+```tsx
+type Point = {
+  x: number;
+  y: number;
+};
+ 
+// Exactly the same as the earlier example
+function printCoord(pt: Point) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+ 
+printCoord({ x: 100, y: 100 });
+```
+实际上可以给任意类型设置类型别名，不仅仅是对象类型。例如类型别名可以为联合类型命名：
+```tsx
+type ID = number | string;
+```
+注意别名知识别名 - 你不能使用类型别名来创建一个类型的 不同的/明显的版本。当你使用这个别名时就像写了别名类型一样。换句话说，代码看起来像是不和规则的但是在 Ts 是符合的，因为两种类型都是同一个类型的别名。
+```tsx
+type UserInputSanitizedString = string;
+ 
+function sanitizeInput(str: string): UserInputSanitizedString {
+  return sanitize(str);
+}
+ 
+// Create a sanitized input
+let userInput = sanitizeInput(getInput());
+ 
+// Can still be re-assigned with a string though
+userInput = "new input";
+```
+
+**8. 接口**
+接口声明是命名对象类型的另一种方法:
+```tsx
+interface Point {
+  x: number;
+  y: number;
+}
+ 
+function printCoord(pt: Point) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+ 
+printCoord({ x: 100, y: 100 });
+```
+就像之前使用的类型别名一样，例子中就像使用匿名对象类型一样。Ts 只关心传递给函数的结构 - 它只关心是否具有预期的属性。因为只关心类型的结构和功能，所以我们称TypeScript为结构类型的类型系统。
+
+**9. 类型别名和接口的区别**
+类型别名和接口非常相似，并且在很多案例中可以自由的在两者之间选择。 几乎接口的所有特性都可以通过type来实现，关键的区别是类型不能重新打开以添加新属性，而接口总是可扩展的。
+
+扩展接口
+*Interface*
+```tsx
+interface Animal {
+  name: string
+}
+
+interface Bear extends Animal {
+  honey: boolean
+}
+
+const bear = getBear() 
+bear.name
+bear.honey
+```
+*Type*
+```tsx
+type Animal = {
+  name: string
+}
+
+type Bear = Animal & { 
+  honey: boolean 
+}
+
+const bear = getBear();
+bear.name;
+bear.honey;
+```
+
+向现有接口添加新字段
+*Interface*
+```tsx
+interface Window {
+  title: string
+}
+
+interface Window {
+  ts: TypeScriptAPI
+}
+
+type TypeScriptAPI =  {
+  transpileModule: (a: string, b: {}) => {
+    
+  }
+}
+
+const src = 'const a = "Hello World"';
+window.ts.transpileModule(src, {});
+window.title = src
+```
+*Type*
+```tsx
+type Window = {
+  title: string
+}
+
+type Window = {
+  ts: TypeScriptAPI
+}
+// 错误  已存在 Window
+```
+
+**9. 类型断言**
+有时候会有 TypeScript 无法知道的值类型信息。
+例如，如果使用`document.getElementById`, Ts 只知道它将返回 HTML元素中的某一些， 但是你可能知道你的页面总是有一个带有给定 ID 的 HTMLCanvasElement。
+在这种情况下，可以使用类型断言来指定更具体的类型
+```tsx
+const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
+```
+
