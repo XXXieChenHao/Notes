@@ -512,4 +512,131 @@ type Window = {
 ```tsx
 const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
 ```
+想类型注释一样，类型断言会被编译器在移除所以并不会影响代码运行时的行为。
+你也能使用尖括号（除非是在 .tsx 文件中），例如：
+```jsx
+const myCanvas = <HTMLCanvasElement>document.getElementById("main_canvas);
+```
+提示：因为类型断言在编译时被移除，因此没有与类型断言相联合的运行代码检查.如果类型断言错误并不会产生异常或者 null。
+
+Ts 只允许类型断言转换为更特定或更不特定的类型。这条规则提供“不可能”的强制措施：
+```tsx
+const x = "hello" as number;
+// Conversion of type 'string' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+// 将类型'string'转换为类型'number'可能是一个错误，因为这两种类型都不能与另一种类型充分重叠。如果这是有意的，首先将表达式转换为“unknown”。
+```
+有时这个规则也过于保守并且不允许更复杂的可能有效的存在。如果是这样，你能使用两个断言，首先是 any（或者是 unknown） 然后转换到需要的类型。
+```tsx
+const a = ('hello' as any) as number;
+const b = ('hello' as unknown) as number;
+```
+
+**10. 文字类型**
+除了基础类型 string 和 number，我们还可以在类型位置中引用特定的字符串和数字。var 和 let 两者都允许变量的内容改变，const 则不可以，这反映在 Ts 如何为字面量创建类型上。
+```tsx
+let changingString = "Hello World";
+changingString = "Olá Mundo";
+// 因为 changingString 能够表示任意可能的字符串，所以 string 就是 Ts 在类型系统中的描述方式
+// changingString ==> let changingString: string
+      
+let changingString: string
+ 
+const constantString = "Hello World";
+// 因为 constantString 只能有一个可能的字符串，所以它有一个文字类型表示
+// constantString ==> onst changingString:  "Hello World"
+```
+文字类型本身并不是很有价值
+```tsx
+let x: "hello" = "hello";
+x = "hello";
+x = "howdy";
+// 类型 "howdy" 不能分配给类型 "hello"
+```
+只有一个值的变量没有多大用处！
+但是通过将字面意思合并到联合中，可以表达一个更有用的概念 - 例如，函数只接受一个确定的设定好已知的值：
+```tsx
+function printText(s: string, alignment: "left" | "right" | "center") {
+  // ...
+}
+printText("Hello, world", "left");
+printText("G'day, mate", "centre");
+// Argument of type '"centre"' is not assignable to parameter of type '"left" | "right" | "center"'.
+// 类型为 "centre" 的参数不能赋给类型为 "left"|"right"|"center" 的参数
+```
+数字文字类型也是如此
+```tsx
+function compare(a: number, b: number): 1 | 0 | -1 {
+  return a === b ? 0 : a > b ? 1 : -1;
+}
+```
+当然也可以与非文字类型联合使用
+```tsx
+interface Options {
+  width: number;
+}
+function configure(x: Options | "auto") {
+  // ...
+}
+configure({width: 100})
+configure("auto")
+configure("atuo")
+// Argument of type '"atuo"' is not assignable to parameter of type 'Options | "auto"'.
+// 类型为 "atuo"的参数不能赋给类型为 'Options|"auto"' 的参数
+```
+还有一种文字类型:布尔文字。只有两种布尔字面值类型，true 和 false 类型。布尔类型本身实际上只是联合 true | false 的别名。
+
+**11. 文字推断**
+当使用对象初始化一个变量是， Ts 会假设这个对象的属性会在后续改变，例如：
+```tsx
+const obj = { counter: 0 };
+if (someCondition) {
+  obj.counter = 1;
+}
+```
+
+Ts 并不认为将一个之前为 0 的字段赋值为 1 是错误的。另一种说法是 obj.counter 一定是数字类型，而不是 0，因为类型是用来确定读写行为的。
+这也同样适用于字符串：
+```tsx
+const req = { url: "http://nicexch.com", method: "GET" };
+handleRequest(req.url, req.method);
+function handleRequest(url: string, method: "GET"|"POST") {}
+// Argument of type 'string' is not assignable to parameter of type '"GET" | "POST"'.
+// 字符串类型参数不能分配给 '"GET"|"POST"' 类型。
+```
+在上述例子中 req.method 被推断为 string 而并非 "GET". 因为代码可以在创建 req 和调用 handleRequest 之间进行评估。handleRequest 可以为 req.method 分配一个新的字符串类似于 "GUESS"，Ts 认为代码包含错误。
+有两种方法可以解决这个问题:
+1. 你可以通过在任意位置给接口添加类型断言：
+
+```tsx
+// Change 1:
+const req = { url: "https://example.com", method: "GET" as "GET" };
+// Change 2
+handleRequest(req.url, req.method as "GET");
+```
+Change 1 意味着确定 req.method 总是具有文字类型 "GET", 防止可能分配的 "GUESS" 参数.
+Change 2 意味着明确要求有其他原因，req.method 拥有值 "GET" 
+
+2. 你也可以使用 as const 转换整个对象为文字类型：
+
+```tsx
+const req = { url: "https://example.com", method: "GET" } as const;
+handleRequest(req.url, req.method);
+```
+`as const` 后缀的行为像 const，但对于类型系统来说， 确保所有属性都被赋值为文字类型，而不是更通用的版本，如字符串或数字。
+
+**11. null 和 undefined**
+Js 有两个原始的值用来表示没有值或未初始化的值：null 和 undefined.
+Ts 有两个相应的类型并且是相同的名字。这些类型的行为取决于你是否开启了 strictNullChecks 选项
+
+*strictNullChecks off*
+
+当 strictNullChecks off 时，仍然能够正常的访问可能为 null 或 undefined 的值，并且 null 和 undefined 能够被分配给任意类型的属性。
+这类似于没有null检查的语言 (如 c#、Java) 的行为。缺少这些值的检查往往是错误的主要来源。所以如果在代码库中这样做是可行时推荐使用 strictNullChecks on
+
+*strictNullChecks on*
+
+当 strictNullChecks on 时，当一个值为 null 或 undefined, 将需要测试它们的值在使用值的方法或者属性之前。就像在使用可选属性之前检查undefined一样，我们可以使用收缩来检查可能为空的值:
+
+
+
 
