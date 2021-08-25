@@ -15,17 +15,18 @@ Web 浏览器开发人员不断优化执行引擎并且添加 API，使开发人
 
 每一门语言都有自己的怪癖，而 Js 的起步也让它同样拥有这种问题，例如：
 1. Js 中判断操作符
-```javascript
-if('' == 0) {
-  // 结果为 true
-}
 
+```js
+if('' == 0) {
+	// 结果为 true
+}
 if(1 < x < 3) {
-  // 结果为 true,并且 x 的任何值都成立
+	// 结果为 true,并且 x 的任何值都成立
 }
 ```
 
 2. JavaScript 允许访问不存在的属性
+
 ```javascript
 const obj = {width: 10, height: 15};
 const area = obj.width * obj.heigth;  // 这里的 heigth 不存在
@@ -59,7 +60,8 @@ console.log(4 / []);  // Js 中输出一个合法的类型 Infinity （无穷大
 然而在 Ts 中则考虑，数字除以一个数组是没有意义的，所以提示错误
 
 ```tsx
-console.log(4 / []);  // The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type. 
+console.log(4 / []);
+// The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type. 
 ```
 算数符右侧的值必须是 'any', 'number', 'bigint' 或者 enum 类型。
 可能有的时候只是想要看一看数字类型除以数组会发生什么，然而在大多数情况下，这都是一个程序错误。TypeScript 类型检查器被设计成允许正确的程序通过，但仍然收集了很多常见的错误。
@@ -195,7 +197,7 @@ Js 有三个非常常见被使用的基础类型：string，number， 和 boolea
 类型名称String、Number和Boolean(以大写字母开头)是合法的，但是要参考一些在代码中很少出现的特殊内置类型。类型经常使用 string，number或者boolean类型。
 
 **2. 数组 Arrays**
-对于特殊类型的数组如 `[1, 2, 3]`, 你可以使用 `number[]` 语法；这语法适用于任何类型（如字符串数组 string[] 等）。你也可能看到`Array<number>` 这样的写法，这意味着相同的事情，在讨论泛型时，我们将学习更多关于语法T<U>的内容。
+对于特殊类型的数组如 `[1, 2, 3]`, 你可以使用 `number[]` 语法；这语法适用于任何类型（如字符串数组 string[] 等）。你也可能看到`Array<number>` 这样的写法，这意味着相同的事情，在讨论泛型时，我们将学习更多关于语法的内容。
 注意[数字]是不同的;请参阅元组类型一节。
 
 **3. 任意类型 any**
@@ -512,7 +514,7 @@ type Window = {
 ```tsx
 const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
 ```
-想类型注释一样，类型断言会被编译器在移除所以并不会影响代码运行时的行为。
+像类型注释一样，类型断言会被编译器在移除所以并不会影响代码运行时的行为。
 你也能使用尖括号（除非是在 .tsx 文件中），例如：
 ```jsx
 const myCanvas = <HTMLCanvasElement>document.getElementById("main_canvas);
@@ -637,6 +639,50 @@ Ts 有两个相应的类型并且是相同的名字。这些类型的行为取�
 
 当 strictNullChecks on 时，当一个值为 null 或 undefined, 将需要测试它们的值在使用值的方法或者属性之前。就像在使用可选属性之前检查undefined一样，我们可以使用收缩来检查可能为空的值:
 
+```tsx
+function doSomething(x: string | null) {
+  if (x === null) {
+    // do nothing
+  } else {
+    console.log("Hello, " + x.toUpperCase());
+  }
+}
+```
 
+*非空断言操作符*
+Ts 还有一种特殊的语法，可以在不做任何显式检查的情况下从类型中删除 null 和 undefined。在表达式后书写感叹号 (!) 表示一个有效的类型断言，该值不是空的或未定义的。
+```tsx
+function liveDangerously(x?: number | null) {
+  // No error
+  console.log(x!.toFixed());
+}
+```
+就像其他类型断言，这并不影响代码运行时的行为， 所以只使用很重要!当你知道值不能为空或未定义时。
 
+**12. 枚举**
+枚举是 Ts 添加到 Js 中的一个特色，它允许描述一个值，这个值可以是一组可能的命名常量之一。不像大多数 Ts 特色一样，这不是对 Js 类型级的添加而是对运行时的添加。正因如此，这是一个你应该知道已存在的特点，但除非你确定，否则先别用。
 
+**13. 不太常见的基本元素**
+值得一提的是 JavaScript 中在类型系统中表示的其他基本类型。
+
+*bigint*
+ES2020 中作为基础类型在 Js 中表示非常大的数字:
+
+```tsx
+// 通过 BigInt 方法创建一个 bigint 类型
+const oneHundred: bigint = BigInt(100);
+ 
+// 通过字面量的方式创建一个 bigint 类型
+const anotherHundred: bigint = 100n;
+```
+*symbol*
+在 Js 中通过 Symbol 方法创建一个表示全局唯一的引用:
+
+```tsx
+const firstName = Symbol("name");
+const secondName = Symbol("name");
+ 
+if (firstName === secondName) {
+  // 这个条件总是返回 false 因为 'typeof firstName' 和 'typeof secondName' 没有重合部分
+}
+```
