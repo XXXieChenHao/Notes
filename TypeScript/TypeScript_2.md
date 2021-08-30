@@ -430,14 +430,259 @@ bullName('Xi', 'Chao', '哈哈哈', '诶呀诶呀')
 **6. 结构赋值**
 ```tsx
 function test(
-  { first, second }: { first: number, second: number } = { first: 1, second: 2 }
+  { first: , second }: { first: number, second: number } = { first: 1, second: 2 }
   ): number {
   return first + second
 }
 
 ```
 ```tsx
-function test ({first = 2}: {first: number}): number {
+function test ({first}: {first: number}): number {
   return first
 }
 ```
+
+**7. This 指向**
+1. this 可以通过箭头函数修改 this 指向
+2. 通过指定参数注解 this 的类型
+
+```tsx
+interface Card {
+  suit: string;
+  card: number;
+}
+
+interface Dack {
+  suits: string[];
+  cards: number[];
+  createCardPicker(this: Dack): () => Card
+}
+
+let deck: Dack = {
+  suits: ["hearts", "spades", "clubs", "diamonds"],
+  cards: Array(52),
+  createCardPicker: function() {
+      return () => {
+          let pickedCard = Math.floor(Math.random() * 52);
+          let pickedSuit = Math.floor(pickedCard / 13);
+
+          return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+      }
+  }
+}
+
+let cardPicker = deck.createCardPicker();
+let pickedCard = cardPicker();
+
+alert("card: " + pickedCard.card + " of " + pickedCard.suit);
+```
+
+**8. 函数重载**
+存在一主体方法，输入不同，无法确认返回值类型，函数重载可以进行确认
+```tsx
+function reverse(x: number|string) {
+  if(typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''))
+  } 
+  if(typeof x === 'string') {
+    return x.split('').reverse().join('')
+  }
+}
+```
+使用函数重载：
+```tsx
+function reverse(x: number): number;
+function reverse(x: string): string;
+function reverse(x: number|string) {
+  if(typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''))
+  } 
+  if(typeof x === 'string') {
+    return x.split('').reverse().join('')
+  }
+}
+```
+在 Ts 中的重载并没有改变任何的编译结果，但是它能起到一个更加表意清楚的作用。
+
+
+
+## 类的注解
+
+### 2. 类成员的修饰符
+*public*
+公共的成员属性
+- 自身可调用
+- 子类可调用
+- 实例可调用
+
+```tsx
+class Animal {
+  public name: string;
+  public constructor (theName: string) {this.name = theName}
+  public move(distance: number) {
+    console.log(`${this.name} move  d ${distance} m.`)
+  }
+}
+```
+
+*private*
+私有的成员属性
+- 只能够自身调用
+
+- 无法继承
+```tsx
+class Animal {
+  private name: string;
+  public constructor (theName: string) {this.name = theName}
+  private move(distance: number) {
+    console.log(`${this.name} moved ${distance} m.`)
+  }
+}
+
+// Class 'Snake' incorrectly extends base class 'Animal'. Types have separate declarations of a private property 'move'
+class Snake extends Animal {
+  constructor(name: string) {
+    super(name)
+  }
+  private move(distance: number) {
+    super.move(2)
+  }
+}
+```
+
+- 实例无法调用
+```tsx
+class Animal {
+  private name: string;
+  public constructor (theName: string) {this.name = theName}
+  private move(distance: number) {
+    console.log(`${this.name} moved ${distance} m.`)
+  }
+}
+
+let animal = new Animal('动物');
+animal.move(2)  // Property 'move' is private and only accessible within class 'Animal'.
+```
+
+*proprotected*
+受保护的成员属性
+- 自身可调用
+- 子类可调用
+- 实例无法调用
+```tsx
+class Animal {
+  protected name: string;
+  public constructor (theName: string) {this.name = theName}
+  protected move(distance: number) {
+    console.log(`${this.name} moved ${distance} m.`)
+  }
+}
+
+class Snake extends Animal {
+  constructor(name: string) {
+    super(name)
+  }
+  protected move(distance: number) {
+    super.move(2) // no error  可以调用
+  }
+}
+
+let an = new Animal('动物')
+an.move(2) 
+// Property 'move' is protected and only accessible within class 'Animal' and its subclasses.
+```
+
+*readonly*
+只读的成员属性
+readonly 的位置需要在 public/protected/private 后面，并且只能书写在属性声明之前，或索引之前
+并且 readony 只能读取，不能写入
+```tsx
+class Animal {
+  public readonly name: string;
+  public constructor (theName: string) {this.name = theName}
+  protected move(distance: number) {
+    this.name = '23' // Cannot assign to 'name' because it is a read-only property.t
+    console.log(`${this.name} moved ${distance} m.`)
+  }
+}
+
+let an = new Animal('动物')
+an.name = '2' // Cannot assign to 'name' because it is a read-only property.
+
+```
+
+**3. 参数属性**
+参数属性通过给构造函数参数前面添加一个访问限定符来声明。 使用 private 限定一个参数属性会声明并初始化一个私有成员；对于 public 和 protected 来说也是一样。其实就是一种简写。
+```tsx
+class Octopus {
+    readonly name: string;
+    readonly numberOfLegs: number = 8;
+    constructor (theName: string) {
+        this.name = theName;
+    }
+}
+```
+上下是等效的。
+```tsx
+class Octopus {
+    readonly numberOfLegs: number = 8;
+    constructor(readonly name: string) {
+    }
+}
+```
+
+### 3. 存取器
+存取器其实对应的就是 getter 和 setter, 改变赋值和读取的行为。
+- get 取值函数  obj.a
+- set 存值函数  obj.a = '123
+- 带有 get 不带有 set 的存取器自动被推断为 readonly
+```tsx
+let passcode = "secret passcode";
+
+class Employee {
+    private _fullName: string;
+
+    get fullName(): string {
+        return this._fullName;
+    }
+
+    set fullName(newName: string) {
+        if (passcode && passcode == "secret passcode") {
+            this._fullName = newName;
+        }
+        else {
+            console.log("Error: Unauthorized update of employee!");
+        }
+    }
+}
+
+let employee = new Employee();
+employee.fullName = "Bob Smith";
+if (employee.fullName) {
+    alert(employee.fullName);
+}
+```
+
+### 静态属性
+静态属性是位于类的静态成员上的属性，需要通过`类名.属性`访问。在 Ts 中通过 static 定义
+```tsx
+class Grid {
+    static origin = {x: 0, y: 0};
+    calculateDistanceFromOrigin(point: {x: number; y: number;}) {
+        let xDist = (point.x - Grid.origin.x);
+        let yDist = (point.y - Grid.origin.y);
+        return Math.sqrt(xDist * xDist + yDist * yDist) / this.scale;
+    }
+    constructor (public scale: number) { }
+}
+
+let grid1 = new Grid(1.0);  // 1x scale
+let grid2 = new Grid(5.0);  // 5x scale
+
+console.log(grid1.calculateDistanceFromOrigin({x: 10, y: 10}));
+console.log(grid2.calculateDistanceFromOrigin({x: 10, y: 10}));
+```
+
+### 抽象类
+抽象类做为其它派生类的基类使用。 它们一般不会直接被实例化。
+- abstract 关键字是用于定义抽象类和在抽象类内部定义抽象方法。
