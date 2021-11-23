@@ -379,3 +379,439 @@ console.log(myArray[1]) // undefined
 
 ### 类类型
 TypeScript 能够用它来明确的强制一个类去符合某种契约
+```tsx
+interface ClockInterface {
+  currentTime: Date
+}
+
+class Clock implements ClockInterface {
+  currentTime: Date;
+  setTime(d: Date) {
+    this.currentTime = d;
+  }
+  constructor(h: number, m: number) { }
+}
+```
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员
+
+### 类静态部分与实例部分的区别
+当你操作类和接口的时候，你要知道类是具有两个类型的：静态部分的类型和实例的类型。 你会注意到，当你用构造器签名去定义一个接口并试图定义一个类去实现这个接口时会得到一个错误
+
+## 类
+
+```tsx
+class Gretter {
+  gretting: string;
+  constructor (message: string) {
+    this.gretting = message
+  }
+  greet() {
+    return 'Hello,' + this.gretting;
+  }
+}
+
+let greet = new Gretter('Xichao');
+console.log(greet.greet())
+```
+在类重使用 this，表示我们访问的是类的成员。
+使用 new 构造了 Greeter 类的一个实例。 它会调用之前定义的构造函数，创建一个 Greeter 类型的新对象，并执行构造函数初始化它。
+
+### 继承
+基于类的程序设计中一种最基本的模式是允许使用继承来扩展现有的类。
+
+```tsx
+class Animal {
+  move(distanceInMeters: number = 0) {
+    console.log(`Animal moved ${distanceInMeters}`);
+  }
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log('汪汪')
+  }
+}
+const dog = new Dog();
+dog.bark();
+dog.move();
+dog.move(10);
+```
+被继承的类如 Animal 被称为基类，也可以叫做父类或者超类，Dog 被称为派生类或是子类。通过 extends 继承基类的方法和属性。因为派生类继承了基类属性和方法，所以派生里实例化对象不仅可以调用自身，也可以调用基类的属性和方法。
+
+**构造函数**
+```tsx
+class Animal {
+  name: string;
+  constructor(theName: string) {
+    this.name = theName;
+  }
+  move(distanceInMeters: number = 0) {
+    console.log(`${this.name} moved ${distanceInMeters}m.`);
+  }
+}
+
+class Snake extends Animal {
+  constructor(name: string) {
+    super(name);
+  }
+  move(distanceInMeters = 5) {
+    console.log('snake is moving');
+    super.move(distanceInMeters);
+  }
+}
+
+class Horse extends Animal {
+  constructor(name: string) {
+    super(name);
+  }
+  move(distanceInMeters = 45) {
+    console.log('horse is moving');
+    super.move(distanceInMeters)
+  }
+}
+
+let snake = new Snake('first');
+let horse = new Horse('second');
+snake.move(10);
+horse.move(20);
+```
+派生类包含了一个构造函数,它必须调用 super()，它会执行基类的构造函数。而且，在构造函数里访问 this 的属性之前，我们 一定要调用 super()。 这个是 TypeScript 强制执行的一条重要规则。
+Snake类和 Horse类都创建了 move 方法，它们重写了从 Animal 继承来的 move方法，使得 move 方法根据不同的类而具有不同的功能。在派生类中调用基类的方法需要使用 super.基类方法()
+
+### 修饰符
+**公共**
+public 公共修饰符，同时也会类中默认的修饰符。表示可以自由的访问类中的成员
+
+```tsx
+class Animal {
+  public name: string;
+  public constructor (theName: string) { this.name = theName; }
+  public move (distanceInMeters: number) {
+    console.log(`${this.name} moved ${distanceInMeters}m.`)
+  }
+}
+
+let cat = new Animal('cat');
+cat.move(20)
+```
+
+**私有**
+private 私有的，使用私有修饰符后，类中的成员无法在外部被使用。
+```tsx
+class Animal {
+  private name: string;
+  constructor(theName: string) { this.name = theName; }
+  private moved(distanceInMeters: string) {
+    console.log(`${this.name} moved ${distanceInMeters}m.`)
+  } 
+}
+
+let cat = new Animal('cat')
+cat.name; // Property 'name' is private and only accessible within class 'Animal'.
+cat.moved(); // Property 'moved' is private and only accessible within class 'Animal'.
+
+class Horse extends Animal {
+  constructor(theName: string) { super(theName)}
+  public moved(distanceInMeters: string) {
+    super.moved(distanceInMeters); // Property 'moved' is private and only accessible within class 'Animal'
+  }
+}
+```
+TypeScript使用的是结构性类型系统。 当我们比较两种不同的类型时，并不在乎它们从何处而来，如果所有成员的类型都是兼容的，我们就认为它们的类型是兼容的。当我们比较带有 private 或 protected 成员的类型的时候，情况就不同了。 如果其中一个类型里包含一个 private 成员，那么只有当另外一个类型中也存在这样一个 private 成员， 并且它们都是来自同一处声明时，我们才认为这两个类型是兼容的。 也就是说，即使两个类中包含一摸一样的成员，但不是来自于同一处定义时，两者也是不兼容的。
+
+```tsx
+class Animal {
+  private name: string;
+  constructor(theName: string) {this.name = theName; }
+}
+
+class Rhino extends Animal {
+  constructor(theName: string) { super(theName); }
+}
+
+class Employee {
+  private name: string;
+  constructor(theName: string) {this.name = theName; }
+}
+
+let animal = new Animal("animal");
+let rhino = new Rhino('rhino');
+let employee = new Employee("employee");
+
+animal = rhino;
+animal = employee; //类型 Employee 无法为 Animal 赋值，类型有单独的私有属性 name 
+```
+Rhino 从过年 Animal 中继承，所以 Rhino 与 Animal 是兼容的，尽管 Employee 中有一个私有成员 name ， 但是并不是 Animal 中的那个，所以两者不兼容。
+
+**受保护的**
+protected 修饰符与 private 修饰符的行为很相似，但有一点不同， protected 成员在派生类中仍然可以访问
+
+```tsx
+class Animal {
+  protected name: string;
+  constructor(theName: string) { this.name = theName }
+}
+
+class Employee extends Animal {
+  constructor(name: string) {
+    super(name)
+  }
+
+  public getElevatorPitch() {
+    return `${this.name}`
+  }
+}
+
+let demo = new Employee('demo')
+console.log(demo.getElevatorPitch());
+demo.name; // Property 'name' is protected and only accessible within class 'Animal' and its subclasses.
+```
+**只读**
+readonly 只读修饰符声明只读属性，只读属性必须在声明时或构造函数里被初始化。
+```tsx
+class Person {
+  readonly name: string;
+  readonly age: Number;
+  readonly numberOfLegs: number = 8;
+  constructor(theAge: Number) {
+    this.age = theAge;
+  }
+}
+
+let dad = new Person(18);
+console.log(dad.age)
+dad.name = 'xch'; // Cannot assign to 'name' because it is a read-only property
+```
+
+**参数属性**
+参数属性可以方便地让我们在一个地方  *定义*  并  *初始化*  一个成员。
+
+```tsx
+class Person {
+  constructor(readonly name: string, public age: number) {
+  }
+}
+
+let xichao = new Person('Xichao', 24)
+console.log(xichao.name)
+console.log(xichao.age)
+```
+
+参数属性通过给构造函数参数前面添加一个访问限定符来声明。 
+
+### 存取器
+Ts 支持通过 getters/setters 来截取对对象的访问。
+```tsx
+class Employee {
+  private _fullName: string;
+  private passcod: any = 'nicexichao'
+  private password: any;
+  get fullName() {
+    return this._fullName
+  }
+
+  set fullName(newName: string) {
+    if (this.password && this.password == this.passcod) {
+      this._fullName = newName
+      console.log('修改成功！')
+    } else {
+      console.log('密码错误，没有权限修改用户名')
+    }
+  }
+
+  public login(password: any) {
+    this.password = password;
+  }
+}
+
+let employee = new Employee();
+employee.login('123456');
+employee.fullName = '登录失败后';
+console.log(employee.fullName);
+employee.login('nicexichao');
+employee.fullName = '登录成功后';
+console.log(employee.fullName);
+```
+
+### 静态属性
+当类被实力话时才会初始化的属性叫做实例成员，也叫实例属性。而存在于类本身上面而不是类上面的实例叫做静态属性。
+访问静态属性时，需要加上 类名. 才能访问
+
+```tsx
+interface Point {
+  x: number;
+  y: number;
+}
+class Grid {
+  static origin: Point = {x: 0, y: 0};
+  calculateDistanceFromOrigin(point: Point) {
+    let xDist = (point.x - Grid.origin.x);
+    let yDist = (point.y - Grid.origin.y);
+    return Math.sqrt(xDist * xDist + yDist * yDist) / this.scale
+  }
+
+  constructor(private scale: number) {}
+}
+
+let grid1 = new Grid(1);
+let grid2 = new Grid(0.5);
+console.log(grid1.calculateDistanceFromOrigin({x: 10, y: 20}));
+console.log(grid2.calculateDistanceFromOrigin({x: 10, y: 20}));
+```
+
+
+### 抽象类
+抽象类做为其它派生类的基类使用。 它们一般不会直接被实例化。 不同于接口，抽象类可以包含成员的实现细节。 abstract关键字是用于定义抽象类和在抽象类内部定义抽象方法。
+抽象类中的抽象方法不包含具体实现并且必须在派生类中实现。 抽象方法的语法与接口方法相似。 两者都是定义方法签名但不包含方法体。 然而，抽象方法必须包含 abstract关键字并且可以包含访问修饰符。
+
+```tsx
+abstract class Department {
+  constructor (public name: string) {}
+
+  printName(): void {
+    console.log('Department name: ' + this.name);
+  }
+
+  abstract printMeeting(): void
+}
+
+class AccountingDepartment extends Department {
+  constructor() {
+    super('xiChao');
+  }
+
+  printMeeting(): void {
+    console.log('Nice to meet you')
+  }
+
+  generateReports(): void {
+    console.log('Generating accounting reports...');
+  }
+}
+
+let department: Department = new AccountingDepartment();
+department.printName()
+department.printMeeting()
+```
+
+
+## 函数
+Ts 可以创建有函数名的函数和匿名函数。
+
+### 函数类型
+函数的类型体现在参数与返回值上。
+**为函数定义类型**
+在参数后加参数的类型
+在函数体前加返回值类型
+```tsx
+function add(x: number, y: number): number {
+  return x + y;
+}
+
+let myAdd = function (x: number, y: number): number {
+  return x + y;
+}
+```
+我们可以给每个参数添加类型之后再为函数本身添加返回值类型。 TypeScript能够根据返回语句自动推断出返回值类型，因此我们通常省略它。
+
+**书写完整函数类型**
+
+```tsx
+let myAdd: (x: number, y: number) => number = function (x: number, y: number): number {
+    return x + y;
+};
+```
+函数类型包含两部分：参数类型和返回值类型。 当写出完整函数类型的时候，这两部分都是需要的。 我们以参数列表的形式写出参数类型，为每个参数指定一个名字和类型。 这个名字只是为了增加可读性。
+
+```tsx
+let myAdd: (baseValue: number, increment: number) => number = function (x: number, y: number): number {
+    return x + y;
+};
+```
+只要参数类型是匹配的，那么就认为它是有效的函数类型，而不在乎参数名是否正确。
+对于返回值，我们在函数和返回值类型之前使用( =>)符号，使之清晰明了。 如之前提到的，返回值类型是函数类型的必要部分，如果函数没有返回任何值，你也必须指定返回值类型为 void而不能留空。
+函数的类型只是由参数类型和返回值组成的。 函数中使用的捕获变量不会体现在类型里。 实际上，这些变量是函数的隐藏状态并不是组成API的一部分。
+
+**推断类型**
+Ts 会根据上下文进行推断, 如果你在赋值语句的一边指定了类型但是另一边没有类型的话，TypeScript编译器会自动识别出类型：
+```tsx
+let myAdd: (baseValue: number, increment: number) => number =
+    function(x, y) { return x + y; };
+```
+
+### 函数参数
+
+**可选参数**
+Ts 中会对参数的个数进行校验，同时会假设只有这些参数，所以过多或过少都会出现问题。 简短地说，传递给一个函数的参数个数必须与函数期望的参数个数一致。
+```tsx
+function buildName(firstName: string, lastName: string) {
+  return firstName + " " + lastName;
+}
+
+buildName('Xi', 'Chao');
+buildName('Xi'); // Expected 2 arguments, but got 1. 期待两个参数，但只有一个
+buildName('Xi', 'Chao', 'nice'); // Expected 2 arguments, but got 3. 期待两个参数，但有三个
+```
+JavaScript里，每个参数都是可选的，可传可不传。 没传参的时候，它的值就是undefined。 在TypeScript里我们可以在参数名旁使用 ?实现可选参数的功能。 比如，我们想让last name是可选的：
+```tsx
+function buildName(firstName: string, lastName?: string) {
+  if (lastName)
+        return firstName + " " + lastName;
+    else
+        return firstName;
+}
+
+buildName('Xi', 'Chao')
+buildName('Xi')
+```
+
+可选参数必须跟在必须参数后面。 如果上例我们想让first name是可选的，那么就必须调整它们的位置，把first name放在后面。
+
+**默认参数**
+在TypeScript里，我们也可以为参数提供一个默认值当用户没有传递这个参数或传递的值是undefined时。 它们叫做有默认初始化值的参数。
+```tsx
+function buildName(firstName: string, lastName = "Smith") {
+  return firstName + " " + lastName;
+}
+
+buildName('xi');
+buildName('xi', 'Chao');
+buildName('xi', 'Chao', 'nice'); // Expected 1-2 arguments, but got 3. 期待 1-2 个参数，但有 3 个。
+```
+带默认值的参数不需要必须放在参数最后，与普通可选参数不同。可以将默认值设置为 undefined，即可让可选参数放在前面。
+
+**剩余参数**
+必要参数，默认参数和可选参数有个共同点，都表示某一个参数，不确定有多少参数传递进来。 在 Js 里，你可以使用 arguments 来访问所有传入的参数。而在TypeScript里，你可以把所有参数收集到一个变量里。
+
+```tsx
+function buildName(firstName: string, ...restOfName: string[]) {
+  return firstName + " " + restOfName.join(" ");
+}
+
+let employeeName = buildName("ZhangSan", "LiSi", "WangEr", "XiChao");
+```
+剩余参数会被当做个数不限的可选参数。 可以一个都没有，同样也可以有任意个。 编译器创建参数数组，名字是你在省略号（ ...）后面给定的名字，你可以在函数体内使用这个数组
+
+
+### This
+在 Js 中 This 在函数被调用时才会指用。
+**This 和箭头函数**
+createCardPicker 方法返回了一个匿名函数，
+```tsx
+let deck = {
+  suits: ["hearts", "spades", "clubs", "diamonds"],
+  cards: Array(52),
+  createCardPicker: function() {
+      return function() {
+          let pickedCard = Math.floor(Math.random() * 52);
+          let pickedSuit = Math.floor(pickedCard / 13);
+
+          return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+      }
+  }
+}
+
+let cardPicker = deck.createCardPicker();
+let pickedCard = cardPicker();
+
+```
