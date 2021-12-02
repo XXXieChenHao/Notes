@@ -1,25 +1,64 @@
-// 1. 导入 react
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-// 使用 createElement
-// // 2. 创建 react 元素
-// const title = React.createElement('h1', null, 'Hello React脚手架!!')
+/**
+ * 函数组件：
+ */
 
-// // 3. 渲染 react 元素
-// ReactDOM.render(title, document.getElementById('root'))
+// function Hello() {
+//   return (
+//     <div>这是一个函数组件</div>
+//   )
+// }
 
-// 使用 JSX
-// // 2. 创建 react 元素
-// const title = <h1>Hello JSX</h1>
+// ReactDOM.render(<Hello />, document.getElementById('root'))
 
-// // 渲染 react 元素
-// ReactDOM.render(title, document.getElementById('root'))
+// const Hello = () => <div>这是一个箭头函数组件</div>
+
+// ReactDOM.render(<Hello />, document.getElementById('root'))
+
+/**
+ * 类组件
+ */
+// class Hello extends React.Component {
+//   render() {
+//     return (
+//       <div>类组件</div>
+//     )
+//   }
+// }
+
+// ReactDOM.render(<Hello />, document.getElementById('root'))
 
 
-// 插入 JS 表达式
-const name = 'Xichao';
+// 抽离组件
+// import Hello from './Hello'
+// ReactDOM.render(<Hello />, document.getElementById('root'))
 
-const title = <h1 className="title">Hello {name}</h1>;
 
-ReactDOM.render(title, document.getElementById('root'));
+// React 时间处理
+
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <button onClick={this.handleClick}>点我，点我</button>
+//     )
+//   }
+//   handleClick() {
+//     console.log('事件触发了')
+//   }
+// }
+
+// ReactDOM.render(<App />, document.getElementById('root'))
+
+
+function App() {
+  function handleClick() {
+    console.log('触发了')
+  }
+
+  return (
+    <button onClick={handleClick}>点我</button>
+  )
+}
+ReactDOM.render(<App />, document.getElementById('root'))
