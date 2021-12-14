@@ -127,10 +127,411 @@ ReactDOM.render(<App />, document.getElementById('root'))
 - React 中的对象叫做：合成事件（对象）
 - 合成事件：兼容所有浏览器，无需担心跨浏览器兼容问题
 
+使用事件对象组织默认事件
+```jsx
+function App() {
+  function handleClick(e) {
+    e.preventDefault()
+    console.log('a标签的单击事件触发了')
+  }
 
+  return (
+    <a href="http://nicexch.cn" onClick={handleClick}>点我</a>
+  )
+}
+ReactDOM.render(<App />, document.getElementById('root'))
+```
 
 
 ## 有状态组件和无状态组件
+- 类组件又叫做有状态组件, 函数组件又叫做无状态组件
+状态 (state) 即数据，如果从数据的角度看待，函数组件自己没有状态，只负责数据展示，表示是一种静态的效果，类组件有自己的状态，负责更新 UI，让页面动起来。
+
+
 ## 组件的 state 和 setState()
+<br />
+
+### state 的基本使用
+- 状态（state） 即数据，**state 的值是对象**，表示一个组件中可以有多个数据
+
+- 状态是组件内部的**私有**数据，只能在组件内部使用
+- 通过 **this.state** 获取状态
+
+```jsx
+class App extends React.Component {
+  // constructor() {
+  //   super()
+
+  //   // 初始化 state
+  //   this.state = {
+  //     count: 0
+  //   }
+  // }
+
+  // 简化语法
+  state = {
+    count: 0
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+### setState()
+- 状态是可变的
+- 语法：this.setState({要修改的数据})
+- **注意：**不要直接修改 state 中的值
+- setState() 的作用：
+  - 修改 state
+  - 更新UI
+```jsx
+class App extends React.Component {
+  state = {
+    count: 0,
+    test: 'a',
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+        <button onClick={() => {
+           this.setState({ count: this.state.count + 1 })
+        }}>+ 1</button>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+state 种可能会有很多数据，setState 只需要设置对应的属性修改即可。
+
+react 的 setState 是数据驱动视图的思想提现
+
+### 从 JSX 中抽离时间处理程序
+- JSX 中掺杂过多 JS 逻辑代码，会显得非常混乱，JSX 的功能更多是为了描述页面 UI，所以应该避免逻辑与 JSX 混杂。
+
+```jsx
+class App extends React.Component {
+  state = {
+    count: 0,
+    test: 'a',
+  }
+
+  addCount() {
+    this.setState({ count: this.state.count + 1 })
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+        <button onClick={this.addCount}>+ 1</button>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+将逻辑抽离成单独的方法，但样做了以后发现事件处理程序中报错，this 的值为 undefined, 如果将 this 指向修改为期望值，则逻辑抽离就完成了。
+
 ## 事件绑定 this 指向
+1. 箭头函数
+2. Function.prototype.bind()
+3. class 的实例方法
+
+**1. 利用箭头函数自身不绑定 this 的特点**
+```jsx
+class App extends React.Component {
+  state = {
+    count: 0,
+    test: 'a',
+  }
+
+  addCount() {
+    this.setState({ count: this.state.count + 1 })
+  }
+
+  render() {
+    // 箭头函数中的 this 指向外部环境，此处为 render() 方法
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+        <button onClick={() => this.addCount()}>+ 1</button>
+      </div>
+    )
+  }
+}
+```
+
+**2. Function.prototype.bind()**
+利用 bind 方法，将事件处理程序中弄的 this 与组件实例绑定到一起
+
+```jsx
+class App extends React.Component {
+  state = {
+    count: 0,
+    test: 'a',
+  }
+
+  constructor() {
+    super()
+    this.addCount = this.addCount.bind(this)
+  }
+
+  addCount() {
+    this.setState({ count: this.state.count + 1 })
+  }
+
+  render() {
+    // 箭头函数中的 this 指向外部环境，此处为 render() 方法
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+        <button onClick={this.addCount}>+ 1</button>
+      </div>
+    )
+  }
+}
+```
+
+bind 方法的绑定其实是在最开始执行并且返回一个新函数
+
+**3. class 的实例方法**
+利用箭头函数的 class 实例方法
+```jsx
+class App extends React.Component {
+  state = {
+    count: 0,
+    test: 'a',
+  }
+
+  // 这里本身就是一个箭头函数，所以 this 指向当前实例
+  addCount = () => {
+    this.setState({ count: this.state.count + 1 })
+  }
+
+  render() {
+    // 箭头函数中的 this 指向外部环境，此处为 render() 方法
+    return (
+      <div>
+        <h1>计数器：{this.state.count}</h1>
+        <button onClick={this.addCount}>+ 1</button>
+      </div>
+    )
+  }
+}
+```
 ## 表单处理
+1. 受控组件
+2. 非受控组件(Dom 的方式)
+
+### 受控组件
+- HTML 中的表单元素是可输入的，也就是有自己的可变状态
+- 而 React 中可变状态通常保存在 state 中，并且只通过 setState() 方法来修改
+- React 将 state 与表单元素 value 绑定在一起，由 state 的值来控制表单元素的值
+- 受控组件：其 value 值受到了 Recat 的控制
+
+步骤：
+1. 在 state 中添加一个状态，作为表单元素的 value 值（控制表单元素值的变化）
+2. 给表单元素绑定 change 事件，将表单元素的值设置为 state 的值（控制表单元素值的变化）
+```jsx
+class App extends React.Component {
+  state = {
+    txt: ''
+  }
+
+  handleChange = e => {
+    this.setState({
+      txt: e.target.value
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        <input type="text" value={this.state.txt} onChange={this.handleChange} />
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+表单元素中，输入框、富文本、下拉筛选都是操作 value
+而 复选框则是操作 checked 属性
+```jsx
+class App extends React.Component {
+  state = {
+    txt: '',
+    content: '',
+    city: 'bj',
+    isChecked: false
+  }
+  // 输入框处理
+  handleChange = e => {
+    this.setState({
+      txt: e.target.value
+    })
+  }
+  // 富文本处理
+  handleContent = e => {
+    this.setState({
+      content: e.target.value
+    })
+  }
+  // 下拉筛选处理
+  handleCity = e => {
+    this.setState({
+      city: e.target.value
+    })
+  }
+  // 复选框处理程序
+  handleChecked = e => {
+    this.setState({
+      isChecked: e.target.checked
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        {/* 输入框 */}
+        <input type="text" value={this.state.txt} onChange={this.handleChange} />
+        <br />
+        {/* 富文本框 */}
+        <textarea type="text" value={this.state.content} onChange={this.handleContent} />
+        <br />
+        {/* 下拉框 */}
+        <select value={this.state.city} onChange={this.handleCity}>
+          <option value="sh">上海</option>
+          <option value="gz">广州</option>
+          <option value="bj">北京</option>
+        </select>
+        <br />
+        {/* 复选框 */}
+        <input type="checkbox" checked={this.state.isChecked} onChange={this.handleChecked} />
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+**多表单元素优化**
+由于多表单元素的时间处理程序过多，所以想要优化成尽量少的事件处理程序对表单组件进行监听.
+优化步骤：
+  1. 给表单元素添加 name 属性， name 名称与 state 中的相同
+  2. 根据表单元素类型获取相应的值
+  3. 在 change 时间处理程序中通过 [name] 修改对应的 state
+
+```jsx
+class App extends React.Component {
+  state = {
+    txt: '',
+    content: '',
+    city: 'bj',
+    isChecked: false
+  }
+  // 处理
+  handleForm = e => {
+    // 获取当前 DOM 对西那个
+    const target = e.target;
+    // 根据类型获取值
+    const value = target.type === 'checkbox'
+      ? target.checked
+      : target.value
+
+    // 获取 name
+    const name = target.name
+
+    this.setState({
+      [name]: value
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        {/* 输入框 */}
+        <input type="text" name="txt" value={this.state.txt} onChange={this.handleForm} />
+        <br />
+        {/* 富文本框 */}
+        <textarea type="text" name="content" value={this.state.content} onChange={this.handleForm} />
+        <br />
+        {/* 下拉框 */}
+        <select name="city" value={this.state.city} onChange={this.handleForm}>
+          <option value="sh">上海</option>
+          <option value="gz">广州</option>
+          <option value="bj">北京</option>
+        </select>
+        <br />
+        {/* 复选框 */}
+        <input type="checkbox" name="isChecked" checked={this.state.isChecked} onChange={this.handleForm} />
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))     
+```
+
+### 非受控组件
+借助 ref 的作用使用原生 DOM 方式获取表单元素值
+使用步骤：
+  1. 调用 React.createRef() 方法创建一个 ref 对象
+  2. 将创建好的 ref 对象添加到文本框中
+
+
+```jsx
+class App extends React.Component {
+  constructor() {
+    super()
+
+    this.txtRef = React.createRef()
+  }
+
+  getTxt = () => {
+    console.log(this.txtRef.current.value)
+  }
+
+  render() {
+    return (
+      <div>
+        <input type="text" ref={this.txtRef} />
+        <button onClick={this.getTxt}>获取输入框的值</button>
+      </div>
+    )
+  }
+}
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+1. 调用 React.createRef() 创建一个 ref 对象
+2. 将创建好的 ref 对象添加到文本框中
+3. 通过 ref 对象获取到文本框的值
+  - ref 对象就是原生 DOM 对象
+
+
+
+## 总结
+React 组件基础
+1. 函数组件（无状态组件）负责渲染静态页面结构
+2. 类组件（有状态组件）负责更新 UI，让页面动起来
+3. 绑定事件要注意 this 指向问题
+  - 箭头函数
+  - Function.prototype.bind()
+  - class 的实例方法
+4. 推荐使用受控组件来处理表单
+5. React 组件思想完全利用 JS 语言的能力创建组件
