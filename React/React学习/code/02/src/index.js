@@ -1,74 +1,92 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-class App extends React.Component {
+
+// const Hello = (props) => {
+//   return (
+//     <div>
+//       <h1>props: {props.name}</h1>
+//     </div>
+//   )
+// }
+
+// ReactDOM.render(<Hello name="jack" />, document.getElementById('root'))
+
+
+// class Hello extends React.Component {
+//   render() {
+//     return (
+//       <div>
+//         <h1>name: {this.props.name}</h1>
+//         <h2>age: {this.props.age}</h2>
+//       </div>
+//     )
+//   }
+// }
+
+
+// ReactDOM.render(<Hello name="rose" age={19} />, document.getElementById('root'))
+
+// 父组件传递数据给子组件
+
+// class Parent extends React.Component {
+//   state = {
+//     lastName: 'NiceXch'
+//   }
+
+//   render() {
+//     return (
+//       <div>
+//         父组件：{this.state.lastName}
+//         <Child name={this.state.lastName} />
+//       </div>
+//     )
+//   }
+// }
+
+// const Child = (props) => {
+//   return (
+//     <div>
+//       <p>子组件，接收到父组件的数据: {props.name}</p>
+//     </div>
+//   )
+// }
+
+// ReactDOM.render(<Parent />, document.getElementById('root'))
+
+// 子传父
+class Parent extends React.Component {
   state = {
-    comments: [
-      { id: 1, name: 'jack', content: '沙发！！！' },
-      { id: 2, name: 'Micale', content: '椅子！！！' },
-      { id: 3, name: 'Mark', content: '凳子！！！' },
-    ]
+    msg: ''
   }
-
-  // 渲染评论列表
-  renderList = () => {
-    const { comments } = this.state
-    // if...else 判断
-    if (comments.length === 0) {
-      return (<div className="no-comment">暂无评论，快去评论吧～</div>)
-    }
-
-    return (
-      <ul>
-        {comments.map(item => (
-          <li key={item.id}>
-            <h3>评论人： {item.name}</h3>
-            <p>评论内容：{item.content}</p>
-          </li>
-        ))}
-      </ul>)
-
-
-    // 三元返回
-    // return comments.length === 0
-    //   ? (<div className="no-comment">暂无评论，快去评论吧～</div>)
-    //   : (<ul>
-    //     {comments.map(item => (
-    //       <li key={item.id}>
-    //         <h3>评论人： {item.name}</h3>
-    //         <p>评论内容：{item.content}</p>
-    //       </li>
-    //     ))}
-    //   </ul>)
+  getChildMsg = (msg) => {
+    this.setState({
+      msg: msg
+    })
   }
 
   render() {
     return (
-      <div className="app">
-        <div>
-          <input type="text" className="user" placeholder="请输入评论人" />
-          <br />
-          <textarea className="content" cols="30" rows="10" placeholder="请输入评论内容"></textarea>
-          <br />
-          <button>发表评论</button>
-        </div>
-        {/* 通过条件渲染决定渲染什么内容 */}
-        {/* {this.state.comments.length == 0 ?
-          (<div className="no-comment">暂无评论，快去评论吧～</div>)
-          : (<ul>
-            {this.state.comments.map(item => (
-              <li key={item.id}>
-                <h3>评论人： {item.name}</h3>
-                <p>评论内容：{item.content}</p>
-              </li>
-            ))}
-          </ul>)} */}
-
-        {/* 抽离出去 */}
-        {this.renderList()}
+      <div>
+        父组件：{this.state.msg}
+        <Child getMsg={this.getChildMsg} />
       </div>
     )
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+class Child extends React.Component {
+  state = { msg: 'React' }
+  handleClick = () => {
+    this.props.getMsg(this.state.msg)
+  }
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleClick}>点击传递</button>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<Parent />, document.getElementById('root'))
