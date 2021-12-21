@@ -119,7 +119,7 @@ const Child = (props) => {
 ReactDOM.render(<Parent />, document.getElementById('root'))
 ```
 
-**2. 子组件传递数据给父组件**
+### 子组件传递数据给父组件
 子组件利用父组件提供的回调函数，将要传递的数据作为回调函数的参数
 1. 父组件中提供一个回调函数（用于接收数据）
 2. 将该函数作为属性的值，传递给子组件
@@ -162,7 +162,100 @@ class Child extends React.Component {
 ReactDOM.render(<Parent />, document.getElementById('root'))
 ```
 
+### 兄弟组件
+- 将**共享状态**提升到最近的公共父组件总，由**父组件**管理这个状态
+- 公共父组件职责
+  1. 提供共享状态
+  2. 提供操作共享状态的方法
+- 要通讯的子组件只需要通过 props 接收状态或操作状态的方法
+
+```jsx
+class Counter extends React.Component {
+  // 提供共享状态
+  state = {
+    count: 0
+  }
+
+  // 提供修改状态的方法
+  onIncrement = (step) => {
+    this.setState({
+      count: this.state.count + step
+    })
+  }
+  render() {
+    return (
+      <div>
+        <Child1 count={this.state.count} />
+        <Child2 onIncrement={this.onIncrement} />
+      </div>
+    )
+  }
+}
+
+const Child1 = (props) => {
+  return <h1>计数器：{props.count}</h1>
+}
+
+const Child2 = (props) => {
+  let step = 1
+  return <button onClick={() => props.onIncrement(step)}>+{step}</button>
+}
+
+
+ReactDOM.render(<Counter />, document.getElementById('root'))
+```
 ## Context
+如果层级较多的情况使用 props 传递数据非常繁琐，所以更好的方式就是 Context
+作用就是跨组件传递数据
+
+**使用步骤**
+1. 调用 React.createContext() 创建 Provider(提供数据) 和 Consumer(消费数据) 两个组件。
+`const {Provider, Consumer} = React.createContext()` 
+2. 使用 Provider 组件作为父节点
+
+```jsx
+// 1. 创建 context 得到两个组件
+const { Provider, Consumer } = React.createContext()
+// 2. 将父组件使用 Provider 包裹
+// 3. 设置 Provider 的属性 value，表示要传递的数据
+// 4. 使用COnsumer 组件接收数据
+class App extends React.Component {
+  render() {
+    return (
+      <Provider value="pink">
+        <div>
+          <Node />
+        </div>
+      </Provider>
+    )
+  }
+}
+const Node = props => {
+  return (
+    <div>
+      <SubNode />
+    </div>
+  )
+}
+
+const SubNode = props => {
+  return (
+    <div>
+      <Child />
+    </div>
+  )
+}
+const Child = props => {
+  return (
+    <div>
+      <Consumer>{data => <span>我是子节点=={data}</span>}</Consumer>
+    </div>
+  )
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
 ## props 深入
 ## 组件的生命周期
 ## render-props 和 高阶组件
