@@ -257,5 +257,183 @@ ReactDOM.render(<App />, document.getElementById('root'))
 ```
 
 ## props 深入
+
+<br />
+### children 属性
+- children 属性： 表示组件标签的子节点。当组件标签有子节点时，props 就会有该属性
+
+```jsx
+const App = props => {
+  console.log(props.children)
+  return (
+    <div>
+      <h1>组件标签的子节点</h1>
+      {props.children}
+    </div>
+  )
+}
+
+ReactDOM.render(<App>我是子节点</App>, document.getElementById('root'))
+```
+- children 属性与普通的 props 一样，值可以是任意值（文本、React元素、组件、甚至函数）
+
+```jsx
+const App = props => {
+  console.log(props.children)
+
+  // 传递函数时需要调用
+  // props.children()
+  return (
+    <div>
+      <h1>组件标签的子节点</h1>
+      {props.children}
+    </div>
+  )
+}
+
+// 文本节点
+// ReactDOM.render(<App>我是子节点</App>, document.getElementById('root'))
+
+
+// React 元素
+// ReactDOM.render(<App><p>我是一个React 元素标签</p></App>, document.getElementById('root'))
+
+
+// 组件节点
+// const Test = () => <button>我是button组件</button>
+// ReactDOM.render(<App><Test /></App>, document.getElementById('root'))
+
+
+// 传递函数
+// ReactDOM.render(<App>{() => console.log('这是一个函数子节点')}</App>, document.getElementById('root'))
+```
+
+### props 校验
+对于组件来说，props 是外来的，无法保证使用者传入什么格式的数据
+- props 校验：允许在创建组件的时候，就指定 props 的类型、格式等
+- 作用：捕获使用组件时因为 props 导致的错误，给出明确的错误提示，增加组件的健壮性
+
+使用步骤
+1. 安装包 prop-types
+2. 导入 prop-types 包
+3. 使用**组件名.propTypes = {}**来给组件的 props 添加校验规则
+4. 校验规则通过 PropTypes 对象来指定
+
+```jsx
+import PropTypes from 'prop-types'
+
+const App = props => {
+  const arr = props.colors
+  const lis = arr.map((item, index) => <l1 key={index}>{item.name}</l1>)
+
+  return <ul>{lis}</ul>
+}
+
+App.propTypes = {
+  colors: PropTypes.array
+}
+
+ReactDOM.render(<App colors={19} />, document.getElementById('root'))
+```
+可以获取一个明确的错误异常
+```
+Failed prop type: Invalid prop `colors` of type `number` supplied to `App`, expected `array`.
+```
+
+约束规则 
+1. 常见类型： arra、bool、func、number、object、string
+2. React 元素类型： element
+3. 必填项： isRequired
+4. 特定结构的对象： shape({}) 
+5. 属性 filter 的类型： 对象({area: '上海', price: 19999}) 
+
+```jsx
+App.propTypes = {
+  a: PropTypes.number,
+  fn: PropTypes.func.isRequired,
+  tag: PropTypes.element,
+  filter: {
+    area: '上海',
+    price: 1999
+  }
+}
+```
+### props 默认值
+```jsx
+const App = props => {
+  return (
+    <div>
+      <h1>此处展示 props 默认值: {props.pageSize}</h1>
+    </div>
+  )
+}
+
+App.defaultProps = {
+  pageSize: 10
+}
+
+// ReactDOM.render(<App />, document.getElementById('root'))
+// ReactDOM.render(<App pageSize={20} />, document.getElementById('root'))
+```
+不传值时默认值为 10， 传值时 pageSize 为传入的值
+
 ## 组件的生命周期
+意义：组件的生命周期有利于理解组件的运行方式，完成更复杂的组件功能、分析组件错误原因等
+生命周期（类组件）：从组件被创建到挂在到页面中运行，在到组件不被使用时卸载的过程
+钩子函数：生命周期的每个阶段都会伴随一些方法调用，就是钩子函数
+钩子函数的作用：为开发人员在不同阶段操作组件提供了时机
+
+### 生命周期的三个阶段
+1. 每个阶段的执行时机
+2. 每个阶段钩子函数的执行顺序
+3. 每个阶段钩子函数的作用
+
+**1. 创建时（挂载阶段）**
+- 执行时机：组件创建时（页面加载时）
+- 钩子函数以及执行顺序
+  - constructor -> render -> componentDidMount
+```jsx
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    console.warn('生命周期钩子函数：constructor')
+  }
+
+  componentDidMount() {
+    console.warn('componentDidMount')
+  }
+
+  render() {
+    console.warn('render')
+    return (
+      <div>
+        <h1>render</h1>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+- 作用：
+  - constructor 创建组件时，最先执行
+    1. 初始化 state
+    2. 为事件处理程序绑定 this
+  - render 每次组件渲染都会触发
+    - 渲染 UI（注意不能调用 setState）因为会递归更新
+  - componentDidMount 组件挂载（完成 DOM 渲染）后
+    1. 发送网络请求
+    2. DOM 操作
+
+
+** 2. 更新时（更新阶段）**
+- 执行时机： 组件被更新时
+- 钩子函数以及执行顺序
+  - render -> componentUpdate
+- 影响原因：
+  - New Props
+  - setState()
+  - forceUpdate()
+```jsx
+```
 ## render-props 和 高阶组件
