@@ -1,10 +1,17 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import * as utils from './libs/utils';
+import MyUi from './MyUi';
 
 // config -> Object 包含 vue app 的全局的配置项 你可以在挂载组件前调整属性
 
 const app = createApp(App)
+
+app.use(MyUi, {
+  components: [
+    'MyButton'
+  ]
+})
 
 // 添加一个在任何当前实例挂载的组件中都可以被访问的全局属性，
 /**

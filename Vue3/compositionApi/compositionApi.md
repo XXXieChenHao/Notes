@@ -204,4 +204,3 @@ export default {
 
 #### 使用 this
 setup 中没有 this，因为 setup() 是在 2.x选项参数被解析完成之前调用，this 在 setup 与 2.x 选项中的 this 是不一样的，如果 this 有效可能会在 setup 与 2.x 选项中使用时出现一些混乱，并且初学者很难避免在 setup 中造成混乱。
-

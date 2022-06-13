@@ -75,3 +75,52 @@ export default {
 }
 ```
 
+
+## use
+安装 Vue.js 插件。如果插件是一个对象，则它必须暴露一个 install 方法。如果插件本身是一个函数，则它将被视为 install 方法。
+该 install 方法将以应用实例作为第一个参数被调用。传给 use 的其他 options 参数将作为后续参数传入该安装方法。
+```js
+import { createApp } from 'vue'
+import App from './App.vue'
+import MyUi from './MyUi';
+
+const app = createApp(App)
+
+app.use(MyUi, {
+  components: [
+    'MyButton'
+  ]
+})
+
+app.mount('#app')
+```
+
+```js
+import MyButton from './MyButton.vue'
+import MyInput from './MyInput.vue'
+
+const componentPool = [
+  MyButton,
+  MyInput
+]
+
+export default {
+  install(app, options) {
+    // options 为app.use 第二个参数
+    if (options.components) {
+      // 按需引入
+      options.components.map(compName => {
+        componentPool.map(comp => {
+          if (comp.name == compName) {
+            app.component(comp.name, comp)
+          }
+        })
+      })
+    } else {
+      componentPool.map(comp => {
+        app.component(comp.name, comp)
+      })
+    }
+  }
+}
+```

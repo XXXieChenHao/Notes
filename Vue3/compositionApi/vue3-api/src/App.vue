@@ -3,6 +3,7 @@
     <!-- props 参数 -->
     <Arguments :title="title" :count="count" @handleChange="handleChange"/>
     <GlobalProperty :utils="utils"/>
+    <UsePlugin />
   </div>
 </template>
 
@@ -10,11 +11,13 @@
 import { reactive, ref, h } from 'vue'
 import Arguments from './components/Arguments.vue'
 import GlobalProperty from './components/GlobalProperty.vue'
+import UsePlugin from './components/UsePlugin.vue'
 export default {
   name: 'App',
   components: {
     Arguments,
     GlobalProperty,
+    UsePlugin,
   },
   setup() {
     const utils = {
