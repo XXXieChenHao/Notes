@@ -1,9 +1,12 @@
 <template>
   <div>
     <!-- props 参数 -->
-    <Arguments :title="title" :count="count" @handleChange="handleChange"/>
-    <GlobalProperty :utils="utils"/>
-    <UsePlugin />
+    <!-- <Arguments :title="title" :count="count" @handleChange="handleChange"/> -->
+    <!-- <GlobalProperty :utils="utils"/> -->
+    <!-- <UsePlugin /> -->
+    <!-- <Reactive /> -->
+    <!-- <Readonly /> -->
+    <Ref />
   </div>
 </template>
 
@@ -12,12 +15,18 @@ import { reactive, ref, h } from 'vue'
 import Arguments from './components/Arguments.vue'
 import GlobalProperty from './components/GlobalProperty.vue'
 import UsePlugin from './components/UsePlugin.vue'
+import Reactive from './components/Reactive.vue'
+import Readonly from './components/Readonly.vue'
+import Ref from './components/Ref.vue'
 export default {
   name: 'App',
   components: {
     Arguments,
     GlobalProperty,
     UsePlugin,
+    Reactive,
+    Readonly,
+    Ref,
   },
   setup() {
     const utils = {

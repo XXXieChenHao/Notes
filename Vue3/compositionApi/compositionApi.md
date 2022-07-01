@@ -16,15 +16,13 @@ CompostionApi 不是用户层面上的，是 Vue 框架上的， 将 hook 组合
 
 一个 vue 是由多个 hook 组合而成的框架，叫做 compositionApi
 
-## API Reference
-
-### setup
+## setup
 `setup` 是新的组件选项，是为了在使用 compositionAPI 而在组件内部所创建的组件选项。
 
-#### 调用时机
+### 调用时机
 `setup` 被调用在当一个组件实例被创建，在初始化属性完成之后。在生命周期的角度来说在 `beforeCreate` 之前。
 
-#### 生命周期
+### 生命周期
 在 2.0 中生命周期全部都是选项，在 3.0除了 `setup` 外全部都要在 `setup` 中使用, 其中 `beforeCreate` 和 `created` 被删除，见相当于 `setup`
 ```
 beforeCreate   ——>   setup()
@@ -40,7 +38,7 @@ deactivated   ——>  onDeactivated
 errorCaptured   ——>  onErrorCaptured
 ```
 
-#### 在 Template 中使用
+### 在 Template 中使用
 如果 `setup` 返回一个对象，对象的属性将会被合并到**执行机上下文(render context)**以提供于组件的 template 使用
 ```vue
 <template>
@@ -70,7 +68,7 @@ export default {
 响应式在 `setup` 中返回时被自动拆分,所以在后续 template 中获取时不需要使用 `.value` 取值。
 *ref 会生成一个响应式对象，*
 f
-#### render 函数
+### render 函数
 ```js
   import { h } from 'vue'
   const count = ref(0)
@@ -78,7 +76,7 @@ f
 ```
 setup 也能返回一个 render 函数，可以直接将响应式代码描述在相同的作用域中。
 
-#### 参数
+### 参数
 
 **props**
 
@@ -202,5 +200,96 @@ export default {
 2. 可以单独给 props 设置类型推断
 
 
-#### 使用 this
+### 使用 this
 setup 中没有 this，因为 setup() 是在 2.x选项参数被解析完成之前调用，this 在 setup 与 2.x 选项中的 this 是不一样的，如果 this 有效可能会在 setup 与 2.x 选项中使用时出现一些混乱，并且初学者很难避免在 setup 中造成混乱。
+
+
+## Reactivity APIs
+响应性 API 包含以下部分：
+- 
+- refs
+- Computed 与 watch
+- Effect 作用域 API
+
+### 响应性基础 API
+
+**reactive**
+返回一个对象被 proxy 代理后的响应式副本，功能上与 2.x 中的 Vue.observable() 相似。
+
+```js
+const proxyobj = reactive({
+  a: 1,
+  b: {
+    c: 2,
+    d: [1,2,3,4,5,6],
+    e: {
+      f: 6,
+      g: [2,3,4],
+      h: {
+        i: 5,
+        j: 6
+      }
+    }
+  })
+```
+Reactive 的绑定是深度的，它影响了对象内部的所有属性，返回的 proxy 对象不同于原有的对象，所以在开发中应使用被代理后的对象而避免使用原对象。
+
+**readonly**
+readonly 会将一个对象（响应式或者普通的）或者一个 ref 对象返回一个被代理后只读的对象，只读的响应式是深度的，任何一层属性都是只读的。
+
+```js
+const proxyobj = reactive({
+  a: 1,
+})
+const readonlyObj = readonly(proxyobj)
+
+proxyobj.a = 2
+console.log(proxyobj.a) // 2
+
+readonlyObj.a = 3
+console.log(readonlyObj.a) // 2  Set operation on key "a" failed: target is readonly.
+```
+readonly 包裹只要改写就会被警告。
+
+**ref**
+返回一个内部的值和一个响应式可变的 ref 对象。
+```js
+const count = ref(0)
+console.log(count)
+
+count.value = 2
+console.log(count.value)
+/**
+ * RefImpl: {
+ *   dep: undefined
+ *   __v_isRef: true
+ *   __v_isShallow: false
+ *   _rawValue: 0
+ *   _value: 0
+ *   value: 0      inner value
+ * }
+*/
+```
+ref对象只有一个属性 .value，它会指向这个内部的值.访问和赋值都要通过 .value.
+
+
+```js
+const obj = ref({a: 1, b: 2})
+console.log(obj)
+/**
+ * RefImpl: {
+ *   dep: undefined
+ *   __v_isRef: true
+ *   __v_isShallow: false
+ *   _rawValue: {a: 1, b: 2}
+ *   _value: Proxy {a: 1, b: 2}  
+ *   value: Proxy
+ * }
+ * 
+ * 访问时需要 obj.value.a
+*/
+```
+如果将一个对象指定为一个 ref 的值，那么系统会将它通过 reactive 的方法创建一个深度的响应式数据。并且会将一个 Proxy 作为 inner value。
+当一个 ref 对象作为一个属性在 render context(setup)中被返回，并且在 template 中使用，它将会自动将 inner value 取出，所以不需要再通过 .value 取值。
+
+ 
