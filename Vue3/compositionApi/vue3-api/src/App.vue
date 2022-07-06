@@ -6,7 +6,9 @@
     <!-- <UsePlugin /> -->
     <!-- <Reactive /> -->
     <!-- <Readonly /> -->
-    <Ref />
+    <!-- <Ref /> -->
+    <!-- <Computed /> -->
+    <WatchEffect />
   </div>
 </template>
 
@@ -18,6 +20,8 @@ import UsePlugin from './components/UsePlugin.vue'
 import Reactive from './components/Reactive.vue'
 import Readonly from './components/Readonly.vue'
 import Ref from './components/Ref.vue'
+import Computed from './components/Computed.vue'
+import WatchEffect from './components/WatchEffect.vue'
 export default {
   name: 'App',
   components: {
@@ -27,6 +31,8 @@ export default {
     Reactive,
     Readonly,
     Ref,
+    Computed,
+    WatchEffect,
   },
   setup() {
     const utils = {

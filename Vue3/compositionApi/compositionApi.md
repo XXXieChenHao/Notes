@@ -206,7 +206,6 @@ setup 中没有 this，因为 setup() 是在 2.x选项参数被解析完成之�
 
 ## Reactivity APIs
 响应性 API 包含以下部分：
-- 
 - refs
 - Computed 与 watch
 - Effect 作用域 API
@@ -253,6 +252,9 @@ readonly 包裹只要改写就会被警告。
 
 **ref**
 返回一个内部的值和一个响应式可变的 ref 对象。
+
+ref对象只有一个属性 .value，它会指向这个内部的值.访问和赋值都要通过 .value.
+
 ```js
 const count = ref(0)
 console.log(count)
@@ -270,8 +272,9 @@ console.log(count.value)
  * }
 */
 ```
-ref对象只有一个属性 .value，它会指向这个内部的值.访问和赋值都要通过 .value.
 
+如果将一个对象指定为一个 ref 的值，那么系统会将它通过 reactive 的方法创建一个深度的响应式数据。并且会将一个 Proxy 作为 inner value。
+当一个 ref 对象作为一个属性在 render context(setup)中被返回，并且在 template 中使用，它将会自动将 inner value 取出，所以不需要再通过 .value 取值。
 
 ```js
 const obj = ref({a: 1, b: 2})
@@ -289,7 +292,126 @@ console.log(obj)
  * 访问时需要 obj.value.a
 */
 ```
-如果将一个对象指定为一个 ref 的值，那么系统会将它通过 reactive 的方法创建一个深度的响应式数据。并且会将一个 Proxy 作为 inner value。
-当一个 ref 对象作为一个属性在 render context(setup)中被返回，并且在 template 中使用，它将会自动将 inner value 取出，所以不需要再通过 .value 取值。
 
+当一个可访问的 ref 对象或一个可变得值作为 reactive 对象的属性，它将会自然的将其内部值展开就像一个普通的属性一样。
+
+```js
+const count = ref(0)
+const state = reactive({
+  count
+})
+
+count.value = 1
+console.log(state.count)  // 1
+```
+
+如果将一个新的 ref 对象作为属性赋值为已经存在的 ref，那么将会替换掉旧的 ref。
+```js
+const count = ref(0)
+const otherCount = ref(3)
+
+const state = reactive({
+  count
+})
+state.count = otherCount
+console.log(state.count)
+console.log(count.value)
+```
+
+
+注意：reactive 仅当内部关联的是 ref 对象时才会自动展开，如果内部访问的值是一个数据或者原生类型如 Map 则不会自动展开.
+```js
+const arr = reactive([ref(0)])
+console.log(arr[0].value)
+
+const map = reactive(new Map([['foo', ref(0)]]))
+console.log(map.get('foo').value)
+```
+
+
+**computed**
+computed 接受一个 getter 函数，并根据 getter 的返回值返回一个不可变的响应式 ref 对象。
+```vue
+<template>
+  <div>{{superSentence}}</div>
+</template>
+
+<script>
+import { ref, computed } from 'vue'
+export default {
+  name: 'Computed',
+  setup() {
+    const sentence = ref('这是一句话')
+
+    const superSentence = computed(() => {
+      return 'computed' + sentence.value
+    })
+
+    return {
+      superSentence
+    }
+  }
+} 
+</script>
+```
+或者，接受一个拥有 get 和 set 函数的对象，用来创建一个可写的 ref 对象，
+
+```js
+const sentence = ref('这是一句话')
+const superSentence = computed({
+  get() {
+    return '这是get' + sentence.value
+  },
+  set(newValue) {
+    sentence.value = '我修改了这句话'
+  },
+})
+
+setTimeout(() => {
+  superSentence.value = 1
+}, 1000);
+
+return {
+  superSentence
+}
+```
+
+
+**watchEffect**
+watchEffect 会自动依赖收集，响应式监听内部依赖变化，并在依赖改变后立即重新运行一次该方法。
+```js
+const count = ref(0)
+
+setTimeout(() => {
+  count.value = 1
+}, 1000);
+
+watchEffect(() => {
+  console.log(count.value)  // 0,1s后打印 1
+})
+```
+
+*watcher 的停止*
+当 watchEffect 在组件的setup()函数或生命周期钩子期间被调用, watcher 会与组件生命周期狗子联系起来，并且将会在组件卸载时自动的停止。
+另外，watchEffect 会返回一个句柄函数很明确的停止 watcher
+```js
+const count = ref(0)
+
+const stop = watchEffect(() => {
+  console.log(count.value)  // 0, 1 只打印两次
+})
+
+setTimeout(() => {
+  count.value = 1
+}, 1000);
+setTimeout(() => {
+  stop()
+}, 2000);
+setTimeout(() => {
+  count.value = 2
+}, 3000);
+```
+
+*清除副作用*
+  
  
