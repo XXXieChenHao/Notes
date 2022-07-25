@@ -10,8 +10,7 @@
   - 实现类
     - @implementation
     - @end
-  
-**声明一个 Shape 类，并且实现方法获取面积**
+
 项目中 .h 文件用于声明各种成员变量、方法
 ```Objective-c
 @interface CreateClass : NSObject
