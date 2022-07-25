@@ -2,14 +2,13 @@
 <br />
 
 ## 类的创建与使用
-- 关键字
-  - 声明类
-    - @interface  声明类的关键字
-    - @end  结尾
-
-  - 实现类
-    - @implementation
-    - @end
+关键字
+- 声明类
+  - @interface  声明类的关键字
+  - @end  结尾
+- 实现类
+ -  @implementation
+ -  @end
 
 项目中 .h 文件用于声明各种成员变量、方法
 ```Objective-c
